@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Membry - Apoyo Directo</title>
+    <link rel="manifest" href="/manifest.json">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #0b0f19; color: #ffffff; -webkit-tap-highlight-color: transparent; }
+        .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom, 20px); }
+        .py-safe { padding-top: env(safe-area-inset-top, 20px); padding-bottom: env(safe-area-inset-bottom, 20px); }
+
+        /* Animaciones Personalizadas */
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.3; }
+            50% { transform: translate(20px, -20px) scale(1.2); opacity: 0.6; }
+        }
+        .animate-float { animation: float 8s ease-in-out infinite; }
+        .animate-float-delayed { animation: float 10s ease-in-out infinite; animation-delay: 4s; }
+    </style>
+</head>
+<body class="antialiased" x-data="membryApp()">
+
+    <!-- Notificaciones Toast -->
+    <div x-show="toastMessage !== ''" x-transition class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
+        <div class="bg-cyan-500 text-white px-6 py-3 rounded-full shadow-lg font-medium text-sm flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            <span x-text="toastMessage"></span>
+        </div>
+    </div>
+
+    <!-- VISTA 1: ONBOARDING SLIDER -->
+    <div x-show="!isLoggedIn && showOnboarding" class="fixed inset-0 z-50 bg-[#0b0f19] flex flex-col">
+        <div class="flex-1 relative overflow-hidden flex items-center justify-center">
+            <template x-for="(slide, index) in slides" :key="index">
+                <div x-show="currentSlide === index" 
+                     x-transition:enter="transition ease-out duration-300"
+                     x-transition:enter-start="opacity-0 translate-x-8"
+                     x-transition:enter-end="opacity-100 translate-x-0"
+                     class="absolute inset-0 flex flex-col items-center justify-center p-8 text-center">
+                    
+                    <div class="relative mb-8">
+                        <div class="absolute inset-0 bg-blue-500 blur-2xl opacity-40 rounded-full"></div>
+                        <img :src="slide.img" class="relative w-56 h-56 rounded-full object-cover border-4 border-[#1e2336] shadow-2xl">
+                    </div>
+                    
+                    <h2 class="text-3xl font-bold mb-4 tracking-tight" x-text="slide.title"></h2>
+                    <p class="text-gray-400 text-lg leading-relaxed" x-text="slide.desc"></p>
+                </div>
+            </template>
+        </div>
+
+        <div class="p-6 pb-12 bg-gradient-to-t from-[#0b0f19] to-transparent">
+            <div class="flex justify-center gap-2 mb-8">
+                <template x-for="(slide, index) in slides" :key="index">
+                    <div class="h-2 rounded-full transition-all duration-300" :class="currentSlide === index ? 'w-8 bg-blue-500' : 'w-2 bg-white/20'"></div>
+                </template>
+            </div>
+            
+            <button x-show="currentSlide < slides.length - 1" @click="currentSlide++" class="w-full bg-white/10 hover:bg-white/20 text-white font-bold py-4 rounded-xl transition-all">
+                Siguiente
+            </button>
+            
+            <button x-show="currentSlide === slides.length - 1" @click="finishOnboarding()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl shadow-[0_0_20px_rgba(37,99,235,0.4)] active:scale-95 transition-all text-lg flex items-center justify-center gap-2">
+                ¡Crea Ya Mismo!
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- VISTA 2: AUTENTICACIÓN Y REGISTRO (Pantalla Fija Sin Scroll) -->
+    <div x-show="!isLoggedIn && !showOnboarding" x-transition class="fixed inset-0 z-40 bg-[#0b0f19] flex flex-col justify-center px-6 overflow-hidden h-[100dvh]">
+        
+        <div class="absolute top-[-10%] left-[-10%] w-72 h-72 bg-blue-600/20 rounded-full blur-[80px] pointer-events-none animate-float"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-72 h-72 bg-cyan-500/10 rounded-full blur-[80px] pointer-events-none animate-float-delayed"></div>
+
+        <div class="relative z-10 w-full max-w-md mx-auto flex flex-col justify-center h-full">
+            
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-[0_0_30px_rgba(37,99,235,0.4)]">
+                    <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                </div>
+                <h2 class="text-2xl font-bold tracking-tight" x-text="authMode === 'login' ? 'Bienvenido de nuevo' : 'Únete a Membry'"></h2>
+                <p class="text-gray-400 mt-1 text-xs" x-text="authMode === 'login' ? 'Ingresa tus datos para continuar' : 'Comienza a monetizar hoy mismo'"></p>
+            </div>
+
+            <div class="flex bg-white/5 border border-white/10 rounded-xl p-1 mb-5">
+                <button @click="authMode = 'login'" :class="{'bg-blue-600 text-white shadow-md': authMode === 'login', 'text-gray-400 hover:text-white': authMode !== 'login'}" class="flex-1 py-2 text-sm font-semibold rounded-lg transition-all">Ingresar</button>
+                <button @click="authMode = 'register'" :class="{'bg-blue-600 text-white shadow-md': authMode === 'register', 'text-gray-400 hover:text-white': authMode !== 'register'}" class="flex-1 py-2 text-sm font-semibold rounded-lg transition-all">Registrarse</button>
+            </div>
+
+            <div class="space-y-3">
+                <div x-show="authMode === 'register'" class="flex gap-2 mb-2">
+                    <label class="flex-1 flex flex-col items-center p-3 border rounded-xl cursor-pointer transition-all" :class="regRole === 'consumer' ? 'border-blue-500 bg-blue-500/10' : 'border-white/10 bg-black/30'">
+                        <input type="radio" x-model="regRole" value="consumer" class="hidden">
+                        <span class="text-sm font-bold">Consumidor</span>
+                        <span class="text-[10px] text-gray-400 mt-0.5">Explorar y apoyar</span>
+                    </label>
+                    <label class="flex-1 flex flex-col items-center p-3 border rounded-xl cursor-pointer transition-all" :class="regRole === 'creator' ? 'border-cyan-500 bg-cyan-500/10' : 'border-white/10 bg-black/30'">
+                        <input type="radio" x-model="regRole" value="creator" class="hidden">
+                        <span class="text-sm font-bold">Creador</span>
+                        <span class="text-[10px] text-gray-400 mt-0.5">Recibir pagos</span>
+                    </label>
+                </div>
+
+                <div x-show="authMode === 'register' && regRole === 'creator'" 
+                     x-transition:enter="transition ease-out duration-300"
+                     x-transition:enter-start="opacity-0 -translate-y-4"
+                     x-transition:enter-end="opacity-100 translate-y-0"
+                     x-transition:leave="transition ease-in duration-200"
+                     x-transition:leave-start="opacity-100 translate-y-0"
+                     x-transition:leave-end="opacity-0 -translate-y-4">
+                    <input type="text" x-model="username" placeholder="Usuario único (ej. sofiadev)" class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors placeholder-gray-500">
+                </div>
+                <div x-show="authMode === 'register'" 
+                     x-transition:enter="transition ease-out duration-300 delay-75"
+                     x-transition:enter-start="opacity-0 -translate-y-4"
+                     x-transition:enter-end="opacity-100 translate-y-0"
+                     x-transition:leave="transition ease-in duration-200"
+                     x-transition:leave-start="opacity-100 translate-y-0"
+                     x-transition:leave-end="opacity-0 -translate-y-4">
+                    <input type="text" x-model="displayName" placeholder="Nombre completo" class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors placeholder-gray-500">
+                </div>
+                
+                <input type="email" x-model="email" placeholder="Correo electrónico" class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors placeholder-gray-500">
+                <input type="password" x-model="password" placeholder="Contraseña" class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors placeholder-gray-500">
+                
+                <div x-show="authMode === 'register'" class="flex items-start gap-2 mt-3 p-1">
+                    <input type="checkbox" x-model="legalConsent" id="legal" class="mt-0.5 w-4 h-4 accent-blue-500 rounded border-gray-600 bg-gray-700 shrink-0">
+                    <label for="legal" class="text-[11px] text-gray-400 leading-tight">Consiento el tratamiento de mis datos según la <strong class="text-white">Ley 25.326</strong>.</label>
+                </div>
+
+                <!-- Contenedor del botón con altura fija para evitar saltos en la interfaz -->
+                <div class="h-14 mt-4">
+                    <button x-show="isFormValid()" 
+                            x-transition:enter="transition ease-out duration-500"
+                            x-transition:enter-start="opacity-0 translate-y-6 scale-90"
+                            x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                            x-transition:leave="transition ease-in duration-200"
+                            x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                            x-transition:leave-end="opacity-0 translate-y-2 scale-95"
+                            @click="authMode === 'login' ? login() : register()" 
+                            class="w-full bg-white text-black font-bold py-3.5 rounded-xl active:scale-95 transition-all flex justify-center items-center gap-2 text-base shadow-[0_0_20px_rgba(255,255,255,0.4)] hover:shadow-[0_0_30px_rgba(255,255,255,0.6)]">
+                        <span x-text="authMode === 'login' ? 'Acceder' : 'Crear mi cuenta'"></span>
+                        <svg x-show="isLoading" class="animate-spin h-5 w-5 text-black" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VISTA 3: APLICACIÓN PRINCIPAL -->
+    <div x-show="isLoggedIn" style="display: none;" class="pb-24">
+        
+        <!-- PESTAÑA: EXPLORAR CREADOR -->
+        <div x-show="activeTab === 'creator'" class="p-4">
+            <div class="glass-card rounded-3xl p-6 mt-4 mb-6 flex flex-col items-center text-center relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-cyan-400"></div>
+                <img :src="creator.avatar_url || 'https://via.placeholder.com/100'" class="w-24 h-24 rounded-full mb-4 border-4 border-[#0b0f19] shadow-xl object-cover">
+                <h2 class="text-2xl font-bold flex items-center gap-2"><span x-text="creator.display_name"></span><svg class="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg></h2>
+                <p class="text-gray-400 text-sm mt-2" x-text="creator.bio"></p>
+            </div>
+
+            <h3 class="font-semibold text-lg mb-4 ml-2">Invítame un aporte</h3>
+            <div class="glass-card rounded-2xl p-5 mb-8">
+                <div class="flex justify-between bg-black/30 rounded-xl p-2 mb-4">
+                    <button @click="coffeeCount = 1" :class="{'bg-blue-600 shadow-md': coffeeCount === 1}" class="flex-1 py-2 rounded-lg text-sm font-medium transition-all">x1</button>
+                    <button @click="coffeeCount = 3" :class="{'bg-blue-600 shadow-md': coffeeCount === 3}" class="flex-1 py-2 rounded-lg text-sm font-medium transition-all">x3</button>
+                    <button @click="coffeeCount = 5" :class="{'bg-blue-600 shadow-md': coffeeCount === 5}" class="flex-1 py-2 rounded-lg text-sm font-medium transition-all">x5</button>
+                </div>
+                <input type="text" x-model="supporterName" placeholder="Tu nombre (opcional)" class="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 mb-3 text-sm focus:outline-none focus:border-blue-500">
+                <textarea x-model="supporterMessage" placeholder="Mensaje..." rows="2" class="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 mb-4 text-sm focus:outline-none focus:border-blue-500"></textarea>
+                <button @click="processPayment('Aporte Único', coffeeCount * coffeePrice, 'one_time')" class="w-full bg-blue-600 text-white font-semibold py-4 rounded-xl active:scale-95 transition-all flex justify-between items-center px-6">
+                    <span>Aportar ahora</span><span class="font-bold bg-black/20 px-3 py-1 rounded-lg" x-text="`$${(coffeeCount * coffeePrice).toFixed(2)}`"></span>
+                </button>
+            </div>
+            
+            <h3 class="font-semibold text-lg mb-4 ml-2">Membresías Mensuales</h3>
+            <div class="space-y-4">
+                <template x-for="tier in tiers" :key="tier.id">
+                    <div class="glass-card rounded-2xl p-1 relative overflow-hidden" :class="{'border-blue-500/50 shadow-[0_0_15px_rgba(37,99,235,0.15)]': tier.is_popular}">
+                        <div x-show="tier.is_popular" class="absolute top-0 right-0 bg-blue-600 text-[10px] font-bold px-3 py-1 rounded-bl-lg">RECOMENDADO</div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-4">
+                                <div><h4 class="font-bold text-lg" x-text="tier.name"></h4><div class="text-gray-400 text-sm mt-1">Suscripción recurrente</div></div>
+                                <div class="text-right"><div class="font-bold text-2xl" x-text="`$${tier.price}`"></div><div class="text-[10px] text-gray-500 uppercase tracking-wider">/ mes</div></div>
+                            </div>
+                            <button @click="processPayment(tier.name, tier.price, 'subscription')" class="w-full bg-white text-black font-semibold py-3 rounded-xl active:scale-95 transition-transform text-sm">Suscribirme</button>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <!-- PESTAÑA: DASHBOARD (Solo Creadores) -->
+        <div x-show="activeTab === 'dashboard'" class="p-4 pt-8">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Panel Financiero</h2>
+                <button @click="logout()" class="text-sm text-red-400 bg-red-400/10 px-3 py-1 rounded-lg">Salir</button>
+            </div>
+            
+            <div class="glass-card rounded-3xl p-6 mb-6">
+                <div class="text-gray-400 text-sm mb-1">Balance Disponible</div>
+                <div class="text-4xl font-bold text-cyan-400 mb-6" x-text="`$${creator.balance.toFixed(2)}`"></div>
+                <button @click="showToast('Solicitud de retiro enviada')" class="w-full bg-white/10 font-semibold py-3 rounded-xl active:scale-95 transition-transform text-sm">Retirar Fondos</button>
+            </div>
+            
+            <h3 class="font-semibold text-lg mb-4 ml-2">Últimos Movimientos</h3>
+            <div class="space-y-3">
+                <template x-for="tx in transactions" :key="tx.id">
+                    <div class="glass-card rounded-xl p-4 flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-blue-600/20 flex items-center justify-center text-blue-400">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </div>
+                            <div>
+                                <div class="font-semibold text-sm" x-text="tx.supporter_name"></div>
+                                <div class="text-xs text-gray-400" x-text="tx.type === 'subscription' ? 'Suscripción' : 'Aporte'"></div>
+                            </div>
+                        </div>
+                        <div class="font-bold text-cyan-400" x-text="`+$${tx.net_amount}`"></div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navegación Inferior -->
+    <nav x-show="isLoggedIn" style="display: none;" class="fixed bottom-0 w-full bg-[#0b0f19]/90 backdrop-blur-md border-t border-white/10 z-40 pb-safe">
+        <div class="flex justify-around items-center p-4">
+            <button @click="activeTab = 'creator'" :class="{'text-blue-500': activeTab === 'creator', 'text-gray-400': activeTab !== 'creator'}" class="flex flex-col items-center gap-1">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <span class="text-[10px] font-medium">Explorar</span>
+            </button>
+            <button x-show="currentUser?.role === 'creator'" @click="activeTab = 'dashboard'" :class="{'text-blue-500': activeTab === 'dashboard', 'text-gray-400': activeTab !== 'dashboard'}" class="flex flex-col items-center gap-1">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                <span class="text-[10px] font-medium">Panel</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- LÓGICA ALPINE.JS -->
+    <script>
+        function membryApp() {
+            return {
+                showOnboarding: true,
+                currentSlide: 0,
+                slides: [
+                    { img: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600&q=80', title: 'Sube de nivel', desc: 'Gaming y Streaming. Financia tu setup con el apoyo directo de tus viewers.' },
+                    { img: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&q=80', title: 'Monetiza tu ritmo', desc: 'DJs y Músicos. Vende pistas exclusivas o recibe aportes en tus live sets.' },
+                    { img: 'https://images.unsplash.com/photo-1577219491135-ce391730fb2c?auto=format&fit=crop&w=600&q=80', title: 'Tus recetas valen', desc: 'Cocineros y Foodies. Crea suscripciones mensuales para tus mejores platos.' }
+                ],
+                
+                isLoggedIn: false,
+                isLoading: false,
+                currentUser: null,
+                authToken: null,
+                
+                authMode: 'login',
+                regRole: 'consumer',
+                email: '',
+                password: '',
+                username: '',
+                displayName: '',
+                legalConsent: false,
+                
+                activeTab: 'creator',
+                toastMessage: '',
+                
+                creator: { id: '1', display_name: 'Cargando...', balance: 0, avatar_url: '' },
+                tiers: [],
+                transactions: [],
+                coffeeCount: 1,
+                coffeePrice: 5,
+                supporterName: '',
+                supporterMessage: '',
+
+                // Función para validar si todos los campos requeridos están llenos
+                isFormValid() {
+                    if (this.authMode === 'login') {
+                        return this.email.trim() !== '' && this.password.trim() !== '';
+                    } else {
+                        // Modo Registro
+                        if (!this.email.trim() || !this.password.trim() || !this.displayName.trim() || !this.legalConsent) return false;
+                        if (this.regRole === 'creator' && !this.username.trim()) return false;
+                        return true;
+                    }
+                },
+
+                async init() {
+                    const savedToken = localStorage.getItem('membry_token');
+                    const savedUser = localStorage.getItem('membry_user');
+                    
+                    if (savedToken && savedUser) {
+                        this.authToken = savedToken;
+                        this.currentUser = JSON.parse(savedUser);
+                        this.isLoggedIn = true;
+                        this.showOnboarding = false;
+                        this.activeTab = this.currentUser.role === 'creator' ? 'dashboard' : 'creator';
+                    }
+                    this.loadCreatorData();
+                },
+
+                finishOnboarding() {
+                    this.showOnboarding = false;
+                    this.authMode = 'register';
+                },
+
+                async login() {
+                    if (!this.email || !this.password) return this.showToast('Completa todos los campos');
+                    this.isLoading = true;
+                    try {
+                        const res = await fetch('/api/auth/login', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ email: this.email, password: this.password })
+                        });
+                        const data = await res.json();
+                        
+                        if (data.success) {
+                            this.isLoggedIn = true;
+                            this.authToken = data.token;
+                            this.currentUser = data.profile;
+                            localStorage.setItem('membry_token', data.token);
+                            localStorage.setItem('membry_user', JSON.stringify(data.profile));
+                            this.showOnboarding = false;
+                            this.activeTab = this.currentUser.role === 'creator' ? 'dashboard' : 'creator';
+                            this.showToast('Bienvenido de nuevo');
+                        } else {
+                            this.showToast(data.error || 'Credenciales inválidas');
+                        }
+                    } catch (e) {
+                        this.showToast('Modo Offline: Login simulado');
+                        setTimeout(() => {
+                            this.isLoggedIn = true;
+                            this.currentUser = { role: 'creator', display_name: 'Usuario Demo' };
+                            this.showOnboarding = false;
+                            this.activeTab = 'dashboard';
+                        }, 500);
+                    } finally {
+                        this.isLoading = false;
+                    }
+                },
+
+                async register() {
+                    if (!this.email || !this.password || !this.displayName) return this.showToast('Completa los campos obligatorios');
+                    if (!this.legalConsent) return this.showToast('Debes aceptar la Ley 25.326');
+                    
+                    this.isLoading = true;
+                    try {
+                        const res = await fetch('/api/auth/register', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                email: this.email, password: this.password, role: this.regRole,
+                                username: this.regRole === 'creator' ? this.username : null,
+                                display_name: this.displayName
+                            })
+                        });
+                        const data = await res.json();
+                        if (data.success) {
+                            this.showToast('Cuenta creada. Inicia sesión.');
+                            this.authMode = 'login';
+                            this.password = ''; 
+                        } else {
+                            this.showToast(data.error || 'Error al crear cuenta');
+                        }
+                    } catch (e) {
+                        this.showToast('Modo Offline: Registro simulado exitoso');
+                        this.authMode = 'login';
+                    } finally {
+                        this.isLoading = false;
+                    }
+                },
+
+                logout() {
+                    this.isLoggedIn = false;
+                    this.currentUser = null;
+                    this.authToken = null;
+                    localStorage.removeItem('membry_token');
+                    localStorage.removeItem('membry_user');
+                    this.password = '';
+                    
+                    this.showOnboarding = true;
+                    this.currentSlide = 0;
+                },
+
+                async loadCreatorData() {
+                    try {
+                        const res = await fetch('/api/creator/sofiadev');
+                        const data = await res.json();
+                        this.creator = data.creator;
+                        this.coffeePrice = parseFloat(data.creator.coffee_price);
+                        this.tiers = data.tiers;
+                        this.transactions = data.transactions;
+                    } catch (e) {
+                        this.creator = { id: '1', display_name: 'Sofía Rostova', bio: 'Diseño de interfaces.', balance: 1450.00, avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300' };
+                        this.tiers = [{id: 1, name: 'Comunidad VIP', price: 9.99, is_popular: true}];
+                        this.transactions = [{id: 1, supporter_name: 'Juan Pérez', net_amount: 4.60}];
+                    }
+                },
+
+                async processPayment(title, amount, type) {
+                    this.showToast('Procesando pago seguro...');
+                    setTimeout(() => {
+                        this.creator.balance += (amount * 0.92);
+                        this.showToast('¡Pago simulado aprobado!');
+                    }, 1000);
+                },
+
+                showToast(msg) {
+                    this.toastMessage = msg;
+                    setTimeout(() => { this.toastMessage = ''; }, 3000);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
