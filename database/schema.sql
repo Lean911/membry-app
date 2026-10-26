@@ -15,7 +15,7 @@ CREATE TABLE creators (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- 2. Tabla de Planes de Suscripción Mensual
+-- 2. Planes de Suscripción Mensual
 CREATE TABLE subscription_tiers (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     creator_id UUID REFERENCES creators(id) ON DELETE CASCADE,
@@ -27,7 +27,7 @@ CREATE TABLE subscription_tiers (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- 3. Tabla de Transacciones (Cafecitos únicos y cobros de suscripciones)
+-- 3. Transacciones (pagos únicos + primer pago de suscripción)
 CREATE TABLE transactions (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     creator_id UUID REFERENCES creators(id) ON DELETE CASCADE,
@@ -37,38 +37,39 @@ CREATE TABLE transactions (
     type TEXT CHECK (type IN ('one_time', 'subscription')) NOT NULL,
     gross_amount NUMERIC(10, 2) NOT NULL,
     platform_fee NUMERIC(10, 2) NOT NULL,
+    mp_fee NUMERIC(10, 2) DEFAULT 0,
     net_amount NUMERIC(10, 2) NOT NULL,
     status TEXT CHECK (status IN ('pending', 'approved', 'rejected')) DEFAULT 'pending',
     mp_payment_id TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Insertar un creador y planes de prueba
-INSERT INTO creators (id, username, display_name, bio, avatar_url, coffee_price, balance, verified)
-VALUES (
-    '11111111-1111-1111-1111-111111111111',
-    'sofiadev',
-    'Sofía Rostova',
-    'Diseño de interfaces, recursos de código y comunidad exclusiva para creadores digitales.',
-    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
-    5.00,
-    1450.00,
-    true
+-- ÍNDICE ÚNICO para idempotencia de webhooks (evita procesar dos veces el mismo pago)
+CREATE UNIQUE INDEX IF NOT EXISTS idx_transactions_mp_payment_id
+    ON transactions(mp_payment_id)
+    WHERE mp_payment_id IS NOT NULL;
+
+-- 4. NUEVA: Suscripciones recurrentes (Preapproval de Mercado Pago)
+CREATE TABLE subscriptions (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    creator_id UUID REFERENCES creators(id) ON DELETE CASCADE,
+    tier_id UUID REFERENCES subscription_tiers(id),
+    supporter_email TEXT NOT NULL,
+    supporter_name TEXT,
+    preapproval_id TEXT UNIQUE NOT NULL,   -- ID de Mercado Pago
+    status TEXT CHECK (status IN ('pending', 'authorized', 'paused', 'cancelled')) DEFAULT 'pending',
+    amount NUMERIC(10, 2) NOT NULL,
+    next_payment_date TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
-INSERT INTO subscription_tiers (creator_id, name, price, benefits, is_popular)
-VALUES 
-(
-    '11111111-1111-1111-1111-111111111111',
-    'Comunidad VIP',
-    9.99,
-    '["Acceso al canal privado de Telegram", "Plantillas y recursos descargables mensuales", "Votación de próximos contenidos"]',
-    true
-),
-(
-    '11111111-1111-1111-1111-111111111111',
-    'Inner Circle + Mentoría',
-    24.99,
-    '["Todo lo incluido en el plan VIP", "Sesión grupal en vivo 1 vez al mes", "Feedback directo a tus proyectos"]',
-    false
+-- 5. NUEVA: Cobros mensuales de cada suscripción
+CREATE TABLE recurring_payments (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    subscription_id UUID REFERENCES subscriptions(id) ON DELETE CASCADE,
+    mp_payment_id TEXT UNIQUE NOT NULL,
+    amount NUMERIC(10, 2) NOT NULL,
+    status TEXT CHECK (status IN ('approved', 'rejected', 'pending')) DEFAULT 'pending',
+    paid_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

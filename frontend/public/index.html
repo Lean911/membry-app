@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <!-- SEO Principal: Título (máx 60 caracteres) y Descripción (máx 155 caracteres) -->
     <title>Membry | Recibí Aportes y Membresías con Mercado Pago en Argentina</title>
     <meta name="description" content="La plataforma gratuita para creadores, streamers y devs en Argentina. Recibí aportes únicos y suscripciones mensuales directo en tu cuenta de Mercado Pago.">
     <meta name="keywords" content="recibir aportes mercado pago, alternativa cafecito, membresias para creadores argentina, patreon en pesos, donaciones streamers argentina, monetizar contenido, membry">
@@ -12,12 +11,10 @@
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://membry.com.ar/">
 
-    <!-- SEO Local para Google Argentina -->
     <meta name="geo.region" content="AR">
     <meta name="geo.placename" content="Buenos Aires">
     <meta name="language" content="es-AR">
 
-    <!-- Open Graph / Vista previa en WhatsApp, Instagram, Discord y Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Membry">
     <meta property="og:title" content="Membry — Financiá tus ideas con el apoyo directo de tu comunidad">
@@ -26,13 +23,11 @@
     <meta property="og:image" content="https://membry.com.ar/og-banner.jpg">
     <meta property="og:locale" content="es_AR">
 
-    <!-- Twitter / X Cards -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Membry | Monetización directa para Creadores">
     <meta name="twitter:description" content="Recibí aportes y membresías en pesos directo en Mercado Pago sin fricciones.">
     <meta name="twitter:image" content="https://membry.com.ar/og-banner.jpg">
 
-    <!-- Datos Estructurados JSON-LD para Google (Rich Snippets) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -41,18 +36,10 @@
       "applicationCategory": "FinanceApplication",
       "operatingSystem": "Web, iOS, Android",
       "description": "Plataforma web para que creadores de contenido, streamers y profesionales reciban aportes económicos y membresías recurrentes vía Mercado Pago en Argentina.",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "ARS"
-      },
-      "areaServed": {
-        "@type": "Country",
-        "name": "Argentina"
-      }
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "ARS" },
+      "areaServed": { "@type": "Country", "name": "Argentina" }
     }
     </script>
-    <!-- Datos Estructurados SEO para Preguntas Frecuentes en Google -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -61,26 +48,17 @@
         {
           "@type": "Question",
           "name": "¿Cómo recibir aportes y donaciones con Mercado Pago en Argentina?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "En Membry solo tenés que crear tu página gratis y vincular tu cuenta de Mercado Pago. Cuando un seguidor te envía un aporte o se suscribe a tu membresía mensual, el dinero en pesos argentinos se acredita directamente en tu cuenta de Mercado Pago."
-          }
+          "acceptedAnswer": { "@type": "Answer", "text": "En Membry solo tenés que crear tu página gratis y vincular tu cuenta de Mercado Pago. Cuando un seguidor te envía un aporte o se suscribe a tu membresía mensual, el dinero en pesos argentinos se acredita directamente en tu cuenta de Mercado Pago." }
         },
         {
           "@type": "Question",
           "name": "¿Qué diferencia hay entre Membry y plataformas como Cafecito o Patreon?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Membry opera 100% en pesos argentinos mediante Mercado Pago y combina aportes únicos rápidos con membresías mensuales recurrentes, metas interactivas y un diseño Dark Mode moderno sin costos fijos."
-          }
+          "acceptedAnswer": { "@type": "Answer", "text": "Membry opera 100% en pesos argentinos mediante Mercado Pago y combina aportes únicos rápidos con membresías mensuales recurrentes, metas interactivas y un diseño Dark Mode moderno sin costos fijos." }
         },
         {
           "@type": "Question",
           "name": "¿Cuánto cuesta crear una página en Membry?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Crear y mantener tu cuenta en Membry es 100% gratis. Solo se aplica una comisión de plataforma del 5% cuando efectivamente recibís un pago."
-          }
+          "acceptedAnswer": { "@type": "Answer", "text": "Crear y mantener tu cuenta en Membry es 100% gratis. Solo se aplica una comisión de plataforma del 5% cuando efectivamente recibís un pago." }
         }
       ]
     }
@@ -112,13 +90,9 @@
         </div>
     </div>
 
-    <!-- ========================================================== -->
-    <!-- MODAL DE TÉRMINOS Y CONDICIONES (RENDERIZADO POR VARIABLES) -->
-    <!-- ========================================================== -->
+    <!-- MODAL LEGAL -->
     <div x-show="showLegalModal" style="display: none;" x-transition.opacity class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
         <div @click.away="showLegalModal = false" class="glass-card bg-[#0e1322] border border-blue-500/30 rounded-3xl max-w-3xl w-full max-h-[85vh] flex flex-col overflow-hidden shadow-2xl">
-            
-            <!-- Cabecera del Modal Legal -->
             <div class="p-6 border-b border-white/10 flex justify-between items-center bg-[#0b0f19]/60">
                 <div>
                     <div class="flex items-center gap-2">
@@ -127,136 +101,100 @@
                     </div>
                     <h2 class="text-xl font-extrabold mt-1">Términos y Condiciones Legales y Política de Privacidad</h2>
                 </div>
-                <button @click="showLegalModal = false" class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-white transition-colors">
-                    ✕
-                </button>
+                <button @click="showLegalModal = false" class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-white transition-colors">✕</button>
             </div>
-
-            <!-- Cuerpo Dinámico Inyectado desde Variables Protegidas -->
             <div class="p-6 overflow-y-auto space-y-5 text-sm leading-relaxed text-gray-300">
                 <div class="bg-blue-950/40 border border-blue-500/30 rounded-2xl p-4 text-xs text-cyan-200">
                     <strong class="text-white block mb-1">Declaración de Indemnidad y Uso Compatible:</strong>
                     <span x-text="`${legalData.config.platformName} opera bajo jurisdicción de ${legalData.config.jurisdiction}. El uso de esta plataforma implica la aceptación plena e incondicional de las siguientes cláusulas normativas.`"></span>
                 </div>
-
                 <template x-for="sec in legalData.sections" :key="sec.id">
                     <div class="bg-white/[0.02] border border-white/5 rounded-2xl p-4">
                         <h3 class="font-bold text-white text-base mb-1.5" x-text="sec.title"></h3>
                         <p class="text-gray-300 text-xs sm:text-sm leading-relaxed" x-text="sec.body"></p>
                     </div>
                 </template>
-
-                <!-- Cláusula Obligatoria AAIP Ley 25.326 -->
                 <div class="bg-black/40 border border-white/10 rounded-2xl p-4 text-[11px] text-gray-400 font-mono leading-relaxed">
                     <div class="text-cyan-400 font-bold mb-1 font-sans">AVISO LEGAL OBLIGATORIO — AGENCIA DE ACCESO A LA INFORMACIÓN PÚBLICA (LEY 25.326):</div>
                     <p x-text="legalData.config.aaipMandatoryNotice"></p>
                 </div>
             </div>
-
-            <!-- Pie del Modal -->
             <div class="p-4 border-t border-white/10 bg-[#0b0f19]/80 flex flex-col sm:flex-row justify-between items-center gap-3">
                 <span class="text-[11px] text-gray-400" x-text="`Titular Legal: ${legalData.config.legalOwner} • Contacto: ${legalData.config.contactEmail}`"></span>
-                <button @click="acceptTermsFromModal()" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-2.5 rounded-xl text-xs transition-all">
-                    He leído y comprendo los Términos Legales
-                </button>
+                <button @click="acceptTermsFromModal()" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-2.5 rounded-xl text-xs transition-all">He leído y comprendo los Términos Legales</button>
             </div>
         </div>
     </div>
 
-    <!-- ========================================== -->
-    <!-- BARRA DE NAVEGACIÓN SUPERIOR A ANCHO TOTAL -->
-    <!-- ========================================== -->
+    <!-- HEADER -->
     <header x-show="currentView !== 'auth'" class="sticky top-0 z-30 w-full bg-[#0b0f19]/85 backdrop-blur-md border-b border-white/5 px-4 sm:px-8 lg:px-10 py-3.5">
         <div class="w-full flex justify-between items-center">
-            <!-- Logo a la izquierda con margen lateral -->
             <button @click="navigate('landing')" class="flex items-center gap-2.5 text-left group">
                 <div class="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(37,99,235,0.5)] group-hover:scale-105 transition-transform">
                     <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                 </div>
                 <span class="font-extrabold text-xl tracking-tight" x-text="legalData.config.platformName"></span>
             </button>
-            
-            <!-- Botones a la derecha con margen lateral -->
             <div class="flex items-center gap-3">
                 <template x-if="!isLoggedIn">
                     <div class="flex items-center gap-2 sm:gap-4">
-                        <button @click="goToAuth('login')" class="text-xs sm:text-sm font-semibold text-gray-300 hover:text-white px-3 py-2 transition-colors">
-                            Ingresar
-                        </button>
-                        <button @click="goToAuth('register')" class="text-xs sm:text-sm font-bold bg-blue-600 hover:bg-blue-500 text-white px-4 sm:px-5 py-2.5 rounded-xl shadow-[0_0_15px_rgba(37,99,235,0.4)] transition-all active:scale-95">
-                            Crear mi página
-                        </button>
+                        <button @click="goToAuth('login')" class="text-xs sm:text-sm font-semibold text-gray-300 hover:text-white px-3 py-2 transition-colors">Ingresar</button>
+                        <button @click="goToAuth('register')" class="text-xs sm:text-sm font-bold bg-blue-600 hover:bg-blue-500 text-white px-4 sm:px-5 py-2.5 rounded-xl shadow-[0_0_15px_rgba(37,99,235,0.4)] transition-all active:scale-95">Crear mi página</button>
                     </div>
                 </template>
-
                 <template x-if="isLoggedIn">
                     <div class="flex items-center gap-3">
                         <span class="text-xs text-cyan-400 font-semibold hidden sm:inline" x-text="`Hola, ${currentUser?.display_name}`"></span>
-                        <button @click="logout()" class="text-xs font-bold text-red-400 bg-red-500/10 border border-red-500/20 px-3.5 py-2 rounded-xl hover:bg-red-500/20 transition-all">
-                            Salir
-                        </button>
+                        <button @click="logout()" class="text-xs font-bold text-red-400 bg-red-500/10 border border-red-500/20 px-3.5 py-2 rounded-xl hover:bg-red-500/20 transition-all">Salir</button>
                     </div>
                 </template>
             </div>
         </div>
     </header>
 
-    <!-- ========================================== -->
-    <!-- VISTA 1: LANDING PAGE (PORTADA CAFECITO)   -->
-    <!-- ========================================== -->
     <main class="flex-1">
+        <!-- ========== VISTA LANDING ========== -->
         <div x-show="currentView === 'landing'" x-transition class="relative overflow-hidden pb-16">
-            
             <div class="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/15 rounded-full blur-[110px] pointer-events-none"></div>
             <div class="absolute top-60 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-[110px] pointer-events-none"></div>
 
-            <!-- SECCIÓN HERO -->
             <section class="max-w-5xl mx-auto px-4 pt-12 pb-16 md:pt-20 md:pb-24 text-center relative z-10">
                 <div class="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 text-cyan-400 text-xs font-bold px-4 py-1.5 rounded-full mb-6">
                     <span>La plataforma de monetización para creadores en Argentina</span>
                 </div>
-                
                 <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-tight mb-6">
                     Financiá tus ideas con el <br class="hidden sm:inline">
                     <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">apoyo directo de tu comunidad</span>
                 </h1>
-                
                 <p class="text-gray-400 text-base sm:text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
                     <span x-text="legalData.config.platformName"></span> es una aplicación web donde streamers, programadores, músicos y creadores reciben aportes únicos y suscripciones mensuales directamente en su cuenta de Mercado Pago.
                 </p>
-
                 <div class="max-w-md mx-auto glass-card p-2 rounded-2xl flex flex-col sm:flex-row items-center gap-2 border-blue-500/30 shadow-[0_0_30px_rgba(37,99,235,0.15)] mb-4">
                     <div class="flex items-center w-full px-3 py-2">
                         <span class="text-gray-400 font-semibold text-sm select-none">membry.app/</span>
                         <input type="text" x-model="username" placeholder="tu_nombre" class="bg-transparent text-white font-bold text-sm focus:outline-none w-full placeholder-gray-600">
                     </div>
-                    <button @click="goToAuth('register')" class="w-full sm:w-auto shrink-0 bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3.5 rounded-xl transition-all active:scale-95 text-sm shadow-lg">
-                        Comenzar gratis
-                    </button>
+                    <button @click="goToAuth('register')" class="w-full sm:w-auto shrink-0 bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3.5 rounded-xl transition-all active:scale-95 text-sm shadow-lg">Comenzar gratis</button>
                 </div>
                 <p class="text-xs text-gray-500">Crear tu página es 100% gratis. Sin costos fijos mensuales.</p>
             </section>
 
-            <!-- SECCIÓN: ¿CÓMO FUNCIONA MEMBRY? -->
             <section class="max-w-6xl mx-auto px-4 py-12">
                 <div class="text-center mb-12">
                     <h2 class="text-2xl sm:text-3xl font-extrabold mb-3">¿Cómo funciona Membry?</h2>
                     <p class="text-gray-400 text-sm sm:text-base max-w-xl mx-auto">Diseñado sin fricciones para que tus seguidores puedan apoyarte en tres toques desde el celular sin descargar nada.</p>
                 </div>
-
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="glass-card rounded-3xl p-7 relative overflow-hidden">
                         <div class="w-12 h-12 bg-blue-600/20 border border-blue-500/30 text-blue-400 font-extrabold text-xl rounded-2xl flex items-center justify-center mb-5">1</div>
                         <h3 class="text-xl font-bold mb-2">Creá tu perfil en 1 minuto</h3>
                         <p class="text-gray-400 text-sm leading-relaxed">Personalizá tu portada, contá quién sos, fijá el valor de tu aporte y configurá una barra de meta para mostrar para qué estás ahorrando.</p>
                     </div>
-
                     <div class="glass-card rounded-3xl p-7 relative overflow-hidden">
                         <div class="w-12 h-12 bg-cyan-500/20 border border-cyan-500/30 text-cyan-400 font-extrabold text-xl rounded-2xl flex items-center justify-center mb-5">2</div>
                         <h3 class="text-xl font-bold mb-2">Compartí tu link en redes</h3>
                         <p class="text-gray-400 text-sm leading-relaxed">Colocá tu enlace único en tu biografía de Instagram, TikTok, Twitch o YouTube. Tus fans entran directo sin necesidad de registrarse.</p>
                     </div>
-
                     <div class="glass-card rounded-3xl p-7 relative overflow-hidden">
                         <div class="w-12 h-12 bg-blue-600/20 border border-blue-500/30 text-blue-400 font-extrabold text-xl rounded-2xl flex items-center justify-center mb-5">3</div>
                         <h3 class="text-xl font-bold mb-2">Recibí pagos y mensajes</h3>
@@ -265,7 +203,6 @@
                 </div>
             </section>
 
-            <!-- SECCIÓN: ¿QUIÉNES PUEDEN REGISTRARSE? -->
             <section class="max-w-6xl mx-auto px-4 py-14">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
                     <div>
@@ -273,11 +210,9 @@
                         <h2 class="text-2xl sm:text-3xl font-extrabold mt-1">¿Quiénes usan Membry?</h2>
                     </div>
                     <button @click="navigate('creator')" class="text-sm font-bold text-cyan-400 hover:text-cyan-300 flex items-center gap-1.5 bg-cyan-500/10 border border-cyan-500/20 px-4 py-2.5 rounded-xl transition-all">
-                        <span>Ver ejemplo de página de creador en vivo</span>
-                        <span>→</span>
+                        <span>Ver ejemplo de página de creador en vivo</span><span>→</span>
                     </button>
                 </div>
-
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                     <template x-for="cat in creatorCategories" :key="cat.title">
                         <div class="glass-card rounded-3xl overflow-hidden group hover:border-blue-500/40 transition-all flex flex-col">
@@ -292,8 +227,7 @@
                                     <p class="text-gray-400 text-xs leading-relaxed" x-text="cat.desc"></p>
                                 </div>
                                 <button @click="navigate('creator')" class="mt-4 text-xs font-bold text-blue-400 hover:text-cyan-300 text-left flex items-center gap-1">
-                                    <span>Explorar perfil demo</span>
-                                    <span>→</span>
+                                    <span>Explorar perfil demo</span><span>→</span>
                                 </button>
                             </div>
                         </div>
@@ -301,13 +235,11 @@
                 </div>
             </section>
 
-            <!-- SECCIÓN: RESEÑAS Y OPINIONES DE CREADORES -->
             <section class="max-w-6xl mx-auto px-4 py-12">
                 <div class="text-center mb-10">
                     <span class="text-xs font-bold uppercase tracking-wider text-blue-400">Comunidad Verificada</span>
                     <h2 class="text-2xl sm:text-3xl font-extrabold mt-1">Lo que dicen nuestros creadores</h2>
                 </div>
-
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <template x-for="item in platformTestimonials" :key="item.id">
                         <div class="glass-card rounded-3xl p-6 flex flex-col justify-between relative">
@@ -329,35 +261,22 @@
                 </div>
             </section>
 
-            <!-- SECCIÓN: PREGUNTAS FRECUENTES (SEO ACORDEÓN INTERACTIVO) -->
             <section class="max-w-4xl mx-auto px-4 py-12" x-data="{ activeFaq: 1 }">
                 <div class="text-center mb-10">
                     <span class="text-xs font-bold uppercase tracking-wider text-cyan-400">Todo claro desde el inicio</span>
                     <h2 class="text-2xl sm:text-3xl font-extrabold mt-1">Preguntas Frecuentes sobre Membry</h2>
                     <p class="text-gray-400 text-sm mt-2">Respuestas rápidas sobre cobros con Mercado Pago, membresías y comisiones en Argentina.</p>
                 </div>
-
                 <div class="space-y-3.5">
                     <template x-for="faq in faqs" :key="faq.id">
-                        <div class="glass-card rounded-2xl overflow-hidden transition-all duration-200" 
-                             :class="activeFaq === faq.id ? 'border-blue-500/40 bg-white/[0.04]' : 'hover:border-white/15'">
-                            
-                            <!-- Pregunta (Botón del Acordeón) -->
-                            <button @click="activeFaq = (activeFaq === faq.id ? null : faq.id); logEvent('FAQ_OPENED', `Consulta FAQ: ${faq.question}`)" 
-                                    class="w-full p-5 text-left flex justify-between items-center gap-4">
+                        <div class="glass-card rounded-2xl overflow-hidden transition-all duration-200" :class="activeFaq === faq.id ? 'border-blue-500/40 bg-white/[0.04]' : 'hover:border-white/15'">
+                            <button @click="activeFaq = (activeFaq === faq.id ? null : faq.id); logEvent('FAQ_OPENED', `Consulta FAQ: ${faq.question}`)" class="w-full p-5 text-left flex justify-between items-center gap-4">
                                 <h3 class="font-bold text-sm sm:text-base text-white" x-text="faq.question"></h3>
-                                <div class="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 text-cyan-400 transition-transform duration-300"
-                                     :class="activeFaq === faq.id ? 'rotate-180 bg-blue-600/20 border-blue-500/30' : ''">
+                                <div class="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0 text-cyan-400 transition-transform duration-300" :class="activeFaq === faq.id ? 'rotate-180 bg-blue-600/20 border-blue-500/30' : ''">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
                                 </div>
                             </button>
-
-                            <!-- Respuesta Desplegable con palabras clave SEO -->
-                            <div x-show="activeFaq === faq.id" 
-                                 x-transition:enter="transition ease-out duration-200"
-                                 x-transition:enter-start="opacity-0 -translate-y-2"
-                                 x-transition:enter-end="opacity-100 translate-y-0"
-                                 class="px-5 pb-5 text-xs sm:text-sm text-gray-300 leading-relaxed border-t border-white/5 pt-3.5">
+                            <div x-show="activeFaq === faq.id" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="px-5 pb-5 text-xs sm:text-sm text-gray-300 leading-relaxed border-t border-white/5 pt-3.5">
                                 <p x-text="faq.answer"></p>
                             </div>
                         </div>
@@ -365,39 +284,26 @@
                 </div>
             </section>
 
-            <!-- BANNER FINAL DE LLAMADO A LA ACCIÓN -->
             <section class="max-w-4xl mx-auto px-4 pt-6">
                 <div class="glass-card rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden border-blue-500/30">
                     <div class="absolute inset-0 bg-gradient-to-r from-blue-600/20 via-transparent to-cyan-500/20 pointer-events-none"></div>
                     <h2 class="text-2xl sm:text-3xl font-extrabold mb-3 relative z-10">¿Listo para recibir tu primer aporte?</h2>
-                    <p class="text-gray-300 text-sm sm:text-base max-w-lg mx-auto mb-8 relative z-10">
-                        Sumate hoy mismo como Creador para armar tu página, o registrate como Seguidor para gestionar tus suscripciones favoritas.
-                    </p>
+                    <p class="text-gray-300 text-sm sm:text-base max-w-lg mx-auto mb-8 relative z-10">Sumate hoy mismo como Creador para armar tu página, o registrate como Seguidor para gestionar tus suscripciones favoritas.</p>
                     <div class="flex flex-col sm:flex-row justify-center gap-3 relative z-10">
-                        <button @click="goToAuth('register')" class="bg-white text-black font-extrabold px-8 py-4 rounded-xl hover:bg-gray-100 active:scale-95 transition-all shadow-[0_0_25px_rgba(255,255,255,0.3)] text-sm">
-                            Ir al formulario de registro
-                        </button>
-                        <button @click="navigate('creator')" class="bg-white/10 hover:bg-white/15 text-white font-bold px-6 py-4 rounded-xl transition-all text-sm">
-                            Ver perfil de ejemplo (@sneakbtw)
-                        </button>
+                        <button @click="goToAuth('register')" class="bg-white text-black font-extrabold px-8 py-4 rounded-xl hover:bg-gray-100 active:scale-95 transition-all shadow-[0_0_25px_rgba(255,255,255,0.3)] text-sm">Ir al formulario de registro</button>
+                        <button @click="navigate('creator')" class="bg-white/10 hover:bg-white/15 text-white font-bold px-6 py-4 rounded-xl transition-all text-sm">Ver perfil de ejemplo (@sneakbtw)</button>
                     </div>
                 </div>
             </section>
         </div>
 
-        <!-- ========================================== -->
-        <!-- VISTA 2: FORMULARIO DE REGISTRO Y LOGIN    -->
-        <!-- ========================================== -->
+        <!-- ========== VISTA AUTH ========== -->
         <div x-show="currentView === 'auth'" style="display: none;" x-transition class="fixed inset-0 z-40 bg-[#0b0f19] flex flex-col justify-center px-6 overflow-hidden h-[100dvh]">
             <div class="absolute top-[-10%] left-[-10%] w-72 h-72 bg-blue-600/20 rounded-full blur-[80px] pointer-events-none animate-float"></div>
             <div class="absolute bottom-[-10%] right-[-10%] w-72 h-72 bg-cyan-500/10 rounded-full blur-[80px] pointer-events-none animate-float-delayed"></div>
-
             <div class="absolute top-6 left-6 z-20">
-                <button @click="navigate('landing')" class="text-xs font-semibold text-gray-300 hover:text-white bg-white/5 border border-white/10 px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition-all">
-                    <span>← Volver al inicio</span>
-                </button>
+                <button @click="navigate('landing')" class="text-xs font-semibold text-gray-300 hover:text-white bg-white/5 border border-white/10 px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition-all"><span>← Volver al inicio</span></button>
             </div>
-
             <div class="relative z-10 w-full max-w-md mx-auto flex flex-col justify-center h-full">
                 <div class="text-center mb-5">
                     <div class="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-[0_0_30px_rgba(37,99,235,0.4)]">
@@ -406,12 +312,10 @@
                     <h2 class="text-2xl font-bold tracking-tight" x-text="authMode === 'login' ? 'Bienvenido a Membry' : 'Creá tu página en Membry'"></h2>
                     <p class="text-gray-400 mt-1 text-xs" x-text="authMode === 'login' ? 'Ingresá tus credenciales para continuar' : 'Completá tus datos para empezar hoy mismo'"></p>
                 </div>
-
                 <div class="flex bg-white/5 border border-white/10 rounded-xl p-1 mb-4">
                     <button @click="authMode = 'login'" :class="{'bg-blue-600 text-white shadow-md': authMode === 'login', 'text-gray-400 hover:text-white': authMode !== 'login'}" class="flex-1 py-2 text-sm font-semibold rounded-lg transition-all">Ingresar</button>
                     <button @click="authMode = 'register'" :class="{'bg-blue-600 text-white shadow-md': authMode === 'register', 'text-gray-400 hover:text-white': authMode !== 'register'}" class="flex-1 py-2 text-sm font-semibold rounded-lg transition-all">Registrarse</button>
                 </div>
-
                 <div class="space-y-3">
                     <div x-show="authMode === 'register'" class="flex gap-2 mb-1">
                         <label class="flex-1 flex flex-col items-center p-2.5 border rounded-xl cursor-pointer transition-all" :class="regRole === 'consumer' ? 'border-blue-500 bg-blue-500/10' : 'border-white/10 bg-black/30'">
@@ -425,38 +329,25 @@
                             <span class="text-[10px] text-gray-400">Recibir aportes</span>
                         </label>
                     </div>
-
                     <div x-show="authMode === 'register' && regRole === 'creator'" x-transition>
                         <div class="flex items-center bg-black/30 border border-white/10 rounded-xl px-4 py-3 focus-within:border-blue-500 transition-colors">
                             <span class="text-gray-500 text-sm select-none">membry.app/</span>
                             <input type="text" x-model="username" placeholder="tu_usuario" class="w-full bg-transparent text-sm focus:outline-none text-white placeholder-gray-600">
                         </div>
                     </div>
-                    
                     <div x-show="authMode === 'register'" x-transition>
                         <input type="text" x-model="displayName" placeholder="Nombre visible (ej. SneakBtw)" class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors placeholder-gray-500">
                     </div>
-                    
                     <input type="email" x-model="email" placeholder="Correo electrónico" class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors placeholder-gray-500">
                     <input type="password" x-model="password" placeholder="Contraseña" class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors placeholder-gray-500">
-                    
                     <div x-show="authMode === 'register'" class="flex items-start gap-2 pt-1">
                         <input type="checkbox" x-model="legalConsent" id="legal" class="mt-0.5 w-4 h-4 accent-blue-500 rounded border-gray-600 bg-gray-700 shrink-0">
                         <label for="legal" class="text-[11px] text-gray-400 leading-tight">
                             Acepto los <button type="button" @click="openLegalModal()" class="text-cyan-400 underline font-semibold hover:text-cyan-300">Términos y Condiciones</button> y el resguardo de datos según la <strong class="text-white" x-text="legalData.config.regulatoryLaws.dataProtection"></strong>.
                         </label>
                     </div>
-
                     <div class="h-14 pt-2">
-                        <button x-show="isFormValid()" 
-                                x-transition:enter="transition ease-out duration-500"
-                                x-transition:enter-start="opacity-0 translate-y-6 scale-90"
-                                x-transition:enter-end="opacity-100 translate-y-0 scale-100"
-                                x-transition:leave="transition ease-in duration-200"
-                                x-transition:leave-start="opacity-100 translate-y-0 scale-100"
-                                x-transition:leave-end="opacity-0 translate-y-2 scale-95"
-                                @click="authMode === 'login' ? login() : register()" 
-                                class="w-full bg-white text-black font-bold py-3.5 rounded-xl active:scale-95 transition-all flex justify-center items-center gap-2 text-base shadow-[0_0_20px_rgba(255,255,255,0.4)]">
+                        <button x-show="isFormValid()" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 translate-y-6 scale-90" x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 scale-100" x-transition:leave-end="opacity-0 translate-y-2 scale-95" @click="authMode === 'login' ? login() : register()" class="w-full bg-white text-black font-bold py-3.5 rounded-xl active:scale-95 transition-all flex justify-center items-center gap-2 text-base shadow-[0_0_20px_rgba(255,255,255,0.4)]">
                             <span x-text="authMode === 'login' ? 'Acceder' : 'Crear mi cuenta'"></span>
                             <svg x-show="isLoading" class="animate-spin h-5 w-5 text-black" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
                         </button>
@@ -465,26 +356,19 @@
             </div>
         </div>
 
-        <!-- ========================================== -->
-        <!-- VISTA 3: PERFIL DE CREADOR Y PANEL         -->
-        <!-- ========================================== -->
+        <!-- ========== VISTA CREADOR / DASHBOARD ========== -->
         <div x-show="currentView === 'creator' || currentView === 'dashboard'" style="display: none;" class="pb-16">
-
-            <!-- PESTAÑA: PERFIL DEL CREADOR -->
             <div x-show="currentView === 'creator'" class="max-w-5xl mx-auto px-4 pt-4">
-                
                 <div x-show="!isLoggedIn" class="mb-3">
                     <button @click="navigate('landing')" class="text-xs font-semibold text-gray-400 hover:text-cyan-400 flex items-center gap-1">
                         <span>← Volver a la portada principal de Membry</span>
                     </button>
                 </div>
-
                 <div class="glass-card rounded-3xl overflow-hidden mb-6 relative">
                     <div class="h-36 md:h-52 w-full bg-gradient-to-r from-blue-900 via-indigo-900 to-cyan-900 relative">
                         <img :src="creator.banner_url" class="w-full h-full object-cover opacity-60">
                         <div class="absolute inset-0 bg-gradient-to-t from-[#0b0f19] via-transparent to-transparent"></div>
                     </div>
-                    
                     <div class="px-6 pb-6 relative flex flex-col md:flex-row items-center md:items-end gap-4 -mt-14 md:-mt-12 text-center md:text-left">
                         <img :src="creator.avatar_url" class="w-28 h-28 rounded-2xl border-4 border-[#0b0f19] shadow-2xl object-cover bg-[#1e2336]">
                         <div class="flex-1">
@@ -505,7 +389,7 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
-                    <!-- Columna Izquierda -->
+                    <!-- COLUMNA IZQUIERDA: METAS + MEMBRESÍAS -->
                     <div class="md:col-span-5 space-y-6">
                         <div class="glass-card rounded-2xl p-5">
                             <div class="flex justify-between items-center mb-2">
@@ -522,8 +406,16 @@
                             </div>
                         </div>
 
+                        <!-- MEMBRESÍAS CON INPUT GLOBAL DE EMAIL -->
                         <div>
                             <h3 class="font-bold text-lg mb-3 ml-1">Membresías Mensuales</h3>
+
+                            <!-- 👇 INPUT NUEVO: email global para suscripción -->
+                            <input type="email" 
+                                   x-model="supporterEmail" 
+                                   placeholder="Tu email (para Mercado Pago)" 
+                                   class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-sm mb-3 focus:outline-none focus:border-cyan-400 placeholder-gray-500">
+
                             <div class="space-y-3">
                                 <template x-for="tier in tiers" :key="tier.id">
                                     <div class="glass-card rounded-2xl p-5 relative overflow-hidden" :class="{'border-blue-500/50': tier.is_popular}">
@@ -538,7 +430,7 @@
                                                 <div class="text-[10px] text-gray-500 uppercase">/ mes</div>
                                             </div>
                                         </div>
-                                        <button @click="processPayment(tier.name, tier.price, 'subscription')" class="w-full bg-white/10 hover:bg-white text-white hover:text-black font-bold py-2.5 rounded-xl transition-all text-xs">
+                                        <button @click="processPayment(tier.name, tier.price, 'subscription', tier)" class="w-full bg-white/10 hover:bg-white text-white hover:text-black font-bold py-2.5 rounded-xl transition-all text-xs">
                                             Suscribirme con Mercado Pago
                                         </button>
                                     </div>
@@ -547,7 +439,7 @@
                         </div>
                     </div>
 
-                    <!-- Columna Derecha -->
+                    <!-- COLUMNA DERECHA: APORTE ÚNICO + MURO -->
                     <div class="md:col-span-7 space-y-6">
                         <div class="glass-card rounded-2xl p-6 border-blue-500/20">
                             <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
@@ -612,21 +504,17 @@
                 </div>
             </div>
 
-            <!-- PESTAÑA: PANEL FINANCIERO Y AUDITORÍA (Exclusivo Creador Registrado) -->
+            <!-- DASHBOARD -->
             <div x-show="currentView === 'dashboard' && isLoggedIn && currentUser?.role === 'creator'" class="max-w-3xl mx-auto p-4 pt-6">
                 <div class="mb-6">
                     <h2 class="text-2xl font-bold">Panel Financiero</h2>
                     <p class="text-xs text-cyan-400" x-text="`membry.app/${currentUser?.username || 'sneakbtw'}`"></p>
                 </div>
-                
                 <div class="glass-card rounded-3xl p-6 mb-6">
                     <div class="text-gray-400 text-sm mb-1">Balance Disponible para Retiro</div>
                     <div class="text-4xl font-extrabold text-cyan-400 mb-6" x-text="`$${creator.balance.toLocaleString('es-AR', {minimumFractionDigits: 2})}`"></div>
-                    <button @click="requestWithdrawal()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl active:scale-95 transition-all text-sm">
-                        Retirar Fondos a Mercado Pago / CBU
-                    </button>
+                    <button @click="requestWithdrawal()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl active:scale-95 transition-all text-sm">Retirar Fondos a Mercado Pago / CBU</button>
                 </div>
-                
                 <h3 class="font-bold text-lg mb-4 ml-1">Últimos Aportes Recibidos</h3>
                 <div class="space-y-3">
                     <template x-for="tx in transactions" :key="tx.id">
@@ -643,18 +531,14 @@
                     </template>
                 </div>
 
-                <!-- SECCIÓN DE AUDITORÍA Y SEGURIDAD -->
                 <div class="mt-8">
                     <div class="flex justify-between items-center mb-4 ml-1">
                         <h3 class="font-bold text-lg flex items-center gap-2">
                             <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                             <span>Registro de Auditoría (Actividad Reciente)</span>
                         </h3>
-                        <button @click="loadAuditLogs()" class="text-[11px] text-cyan-400 hover:text-cyan-300 bg-cyan-500/10 px-2.5 py-1 rounded-md border border-cyan-500/20 transition-all">
-                            Actualizar Logs
-                        </button>
+                        <button @click="loadAuditLogs()" class="text-[11px] text-cyan-400 hover:text-cyan-300 bg-cyan-500/10 px-2.5 py-1 rounded-md border border-cyan-500/20 transition-all">Actualizar Logs</button>
                     </div>
-
                     <div class="glass-card rounded-2xl overflow-hidden border border-white/10">
                         <div class="divide-y divide-white/5 max-h-72 overflow-y-auto">
                             <template x-for="log in auditLogs" :key="log.id">
@@ -676,14 +560,10 @@
         </div>
     </main>
 
-    <!-- ========================================================== -->
-    <!-- FOOTER LEGAL INSTITUCIONAL (ALIMENTADO POR VARIABLES)      -->
-    <!-- ========================================================== -->
+    <!-- FOOTER LEGAL -->
     <footer x-show="currentView !== 'auth'" class="border-t border-white/10 bg-[#070a12] py-12 px-4 pb-28 md:pb-12">
         <div class="max-w-6xl mx-auto space-y-8">
             <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
-                
-                <!-- Columna 1: Identidad y Deslinde -->
                 <div class="md:col-span-6 space-y-3">
                     <div class="flex items-center gap-2.5">
                         <div class="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
@@ -694,8 +574,6 @@
                     </div>
                     <p class="text-xs text-gray-400 leading-relaxed max-w-xl" x-text="legalData.sections[1]?.body"></p>
                 </div>
-
-                <!-- Columna 2: Marco Normativo Argentino -->
                 <div class="md:col-span-3 space-y-2">
                     <h4 class="text-xs font-bold uppercase tracking-wider text-cyan-400">Marco Normativo (AR)</h4>
                     <ul class="text-xs text-gray-400 space-y-1.5">
@@ -705,23 +583,15 @@
                         <li x-text="legalData.config.regulatoryLaws.antiMoneyLaundering"></li>
                     </ul>
                 </div>
-
-                <!-- Columna 3: Acceso a Documentación Legal -->
                 <div class="md:col-span-3 space-y-2">
                     <h4 class="text-xs font-bold uppercase tracking-wider text-cyan-400">Documentación Legal</h4>
                     <div class="flex flex-col items-start gap-2">
-                        <button @click="openLegalModal()" class="text-xs text-white font-semibold hover:text-cyan-400 underline transition-colors">
-                            Ver Términos y Condiciones Completos
-                        </button>
-                        <button @click="openLegalModal()" class="text-xs text-gray-400 hover:text-white transition-colors">
-                            Política de Privacidad y Auditoría (AAIP)
-                        </button>
+                        <button @click="openLegalModal()" class="text-xs text-white font-semibold hover:text-cyan-400 underline transition-colors">Ver Términos y Condiciones Completos</button>
+                        <button @click="openLegalModal()" class="text-xs text-gray-400 hover:text-white transition-colors">Política de Privacidad y Auditoría (AAIP)</button>
                         <span class="text-[11px] text-gray-500 pt-1" x-text="`Jurisdicción: ${legalData.config.jurisdiction}`"></span>
                     </div>
                 </div>
             </div>
-
-            <!-- Aviso AAIP y Derechos Reservados -->
             <div class="pt-6 border-t border-white/5 text-[11px] text-gray-500 flex flex-col sm:flex-row justify-between items-center gap-4">
                 <span x-text="`© 2026 ${legalData.config.platformName} — Titular: ${legalData.config.legalOwner}. Todos los derechos reservados.`"></span>
                 <span x-text="`Pagos operados mediante ${legalData.config.paymentProcessor} • Comisión de plataforma: ${legalData.config.platformFeePercent}%`"></span>
@@ -729,7 +599,7 @@
         </div>
     </footer>
 
-    <!-- NAVEGACIÓN INFERIOR: SOLO VISIBLE SI EL USUARIO ESTÁ REGISTRADO COMO CREADOR -->
+    <!-- NAV INFERIOR -->
     <nav x-show="isLoggedIn && currentUser?.role === 'creator'" style="display: none;" class="fixed bottom-0 w-full bg-[#0b0f19]/95 backdrop-blur-md border-t border-white/10 z-40 pb-safe">
         <div class="max-w-md mx-auto flex justify-around items-center p-3">
             <button @click="navigate('landing')" :class="currentView === 'landing' ? 'text-blue-500' : 'text-gray-400 hover:text-white'" class="flex flex-col items-center gap-1">
@@ -747,15 +617,13 @@
         </div>
     </nav>
 
-    <!-- LÓGICA ALPINE.JS CON MOTOR DE AUDITORÍA Y VARIABLES LEGALES PROTEGIDAS -->
     <script>
-        // Respaldo inicial congelado en caso de desconexión con el servidor
         const DEFAULT_LEGAL_STATE = Object.freeze({
             config: Object.freeze({
                 platformName: 'Membry',
-                legalOwner: 'Membry Platform', // <-- Sin tu nombre personal
+                legalOwner: 'Membry Platform',
                 jurisdiction: 'Ciudad Autónoma de Buenos Aires, República Argentina',
-                contactEmail: 'membry.ok@gmail.com', // <-- Sin tu nombre personal
+                contactEmail: 'membry.ok@gmail.com',
                 version: 'v1.0-AR-2026',
                 lastUpdated: 'Octubre 2026',
                 platformFeePercent: 5,
@@ -769,31 +637,11 @@
                 aaipMandatoryNotice: 'EL TITULAR DE LOS DATOS PERSONALES TIENE LA FACULTAD DE EJERCER EL DERECHO DE ACCESO A LOS MISMOS EN FORMA GRATUITA A INTERVALOS NO INFERIORES A SEIS MESES, SALVO QUE SE ACREDITE UN INTERÉS LEGÍTIMO AL EFECTO CONFORME LO ESTABLECIDO EN EL ARTÍCULO 14, INCISO 3 DE LA LEY Nº 25.326. LA AGENCIA DE ACCESO A LA INFORMACIÓN PÚBLICA, EN SU CARÁCTER DE ÓRGANO DE CONTROL DE LA LEY Nº 25.326, TIENE LA ATRIBUCIÓN DE ATENDER LAS DENUNCIAS Y RECLAMOS QUE INTERPONGAN QUIENES RESULTEN AFECTADOS EN SUS DERECHOS POR INCUMPLIMIENTO DE LAS NORMAS VIGENTES EN MATERIA DE PROTECCIÓN DE DATOS PERSONALES.'
             }),
             sections: Object.freeze([
-                {
-                    id: 'objeto',
-                    title: '1. Naturaleza del Servicio y Alcance de Membry',
-                    body: 'Membry es una plataforma tecnológica de software (SaaS) que brinda herramientas de diseño de perfil digital e integración informática para que creadores independientes ("Creadores") reciban apoyo económico voluntario y suscripciones de su comunidad ("Seguidores"). Membry NO es una entidad financiera (Ley N° 21.526), no capta ahorro público ni administra fondos por cuenta propia; la totalidad de los pagos se procesa mediante Mercado Pago (MercadoLibre S.R.L.).'
-                },
-                {
-                    id: 'exclusion',
-                    title: '2. Exclusión Total de Responsabilidad y Uso Compatible',
-                    body: 'Membry actúa exclusivamente como intermediario tecnológico neutro. Queda totalmente desvinculado y exento de responsabilidad civil, comercial, penal, laboral o tributaria por las acciones, promesas, contenidos, sorteos, entregas o servicios que los Creadores ofrezcan a sus Seguidores. Cualquier uso que se aparte del apoyo legítimo a la creación de contenido incluyendo fraude, lavado de activos (Ley N° 25.246), esquemas piramidales, apuestas, contenido ilegal o infracción a derechos de terceros resultará en la suspensión inmediata y definitiva de la cuenta.'
-                },
-                {
-                    id: 'comisiones',
-                    title: '3. Modelo de Negocio, Comisiones e Impuestos',
-                    body: 'El registro y mantenimiento de la página en Membry es gratuito. Por cada transacción procesada exitosamente, se aplica una comisión de servicio tecnológico del 5%, adicional a los cargos propios de Mercado Pago. Cada Creador actúa como sujeto independiente y es el único responsable de emitir la facturación correspondiente y cumplir con sus obligaciones impositivas ante ARCA (ex AFIP).'
-                },
-                {
-                    id: 'datos',
-                    title: '4. Tratamiento de Datos Personales y Registro de Auditoría',
-                    body: 'En cumplimiento de la Ley N° 25.326, el usuario presta su consentimiento expreso e informado para que Membry recolecte y almacene sus datos identificatorios junto con un registro inmutable de auditoría informática (dirección IP, navegador, fecha, hora y tipo de evento) con la finalidad exclusiva de garantizar la seguridad operativa, prevenir fraudes y acreditar trazabilidad legal.'
-                },
-                {
-                    id: 'jurisdiccion',
-                    title: '5. Ley Aplicable y Jurisdicción',
-                    body: 'Estos Términos y Condiciones se rigen íntegramente por las leyes de la República Argentina (Código Civil y Comercial de la Nación y Ley N° 24.240). Ante cualquier controversia derivada del uso de la plataforma, las partes se someten a la jurisdicción de los Tribunales Ordinarios de la Ciudad Autónoma de Buenos Aires.'
-                }
+                { id: 'objeto', title: '1. Naturaleza del Servicio y Alcance de Membry', body: 'Membry es una plataforma tecnológica de software (SaaS) que brinda herramientas de diseño de perfil digital e integración informática para que creadores independientes ("Creadores") reciban apoyo económico voluntario y suscripciones de su comunidad ("Seguidores"). Membry NO es una entidad financiera (Ley N° 21.526), no capta ahorro público ni administra fondos por cuenta propia; la totalidad de los pagos se procesa mediante Mercado Pago (MercadoLibre S.R.L.).' },
+                { id: 'exclusion', title: '2. Exclusión Total de Responsabilidad y Uso Compatible', body: 'Membry actúa exclusivamente como intermediario tecnológico neutro. Queda totalmente desvinculado y exento de responsabilidad civil, comercial, penal, laboral o tributaria por las acciones, promesas, contenidos, sorteos, entregas o servicios que los Creadores ofrezcan a sus Seguidores. Cualquier uso que se aparte del apoyo legítimo a la creación de contenido incluyendo fraude, lavado de activos (Ley N° 25.246), esquemas piramidales, apuestas, contenido ilegal o infracción a derechos de terceros resultará en la suspensión inmediata y definitiva de la cuenta.' },
+                { id: 'comisiones', title: '3. Modelo de Negocio, Comisiones e Impuestos', body: 'El registro y mantenimiento de la página en Membry es gratuito. Por cada transacción procesada exitosamente, se aplica una comisión de servicio tecnológico del 5%, adicional a los cargos propios de Mercado Pago. Cada Creador actúa como sujeto independiente y es el único responsable de emitir la facturación correspondiente y cumplir con sus obligaciones impositivas ante ARCA (ex AFIP).' },
+                { id: 'datos', title: '4. Tratamiento de Datos Personales y Registro de Auditoría', body: 'En cumplimiento de la Ley N° 25.326, el usuario presta su consentimiento expreso e informado para que Membry recolecte y almacene sus datos identificatorios junto con un registro inmutable de auditoría informática (dirección IP, navegador, fecha, hora y tipo de evento) con la finalidad exclusiva de garantizar la seguridad operativa, prevenir fraudes y acreditar trazabilidad legal.' },
+                { id: 'jurisdiccion', title: '5. Ley Aplicable y Jurisdicción', body: 'Estos Términos y Condiciones se rigen íntegramente por las leyes de la República Argentina (Código Civil y Comercial de la Nación y Ley N° 24.240). Ante cualquier controversia derivada del uso de la plataforma, las partes se someten a la jurisdicción de los Tribunales Ordinarios de la Ciudad Autónoma de Buenos Aires.' }
             ])
         });
 
@@ -822,86 +670,28 @@
                 ],
 
                 creatorCategories: [
-                    {
-                        tag: 'Gaming & Streams',
-                        title: 'Streamers y Gamers',
-                        desc: 'Financiá mejoras para tu PC, periféricos o sorteos con el apoyo en vivo de tus viewers.',
-                        img: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600&q=80'
-                    },
-                    {
-                        tag: 'Software & Tech',
-                        title: 'Devs y Educadores',
-                        desc: 'Monetizá tus tutoriales, repositorios open-source, plantillas y asesorías técnicas.',
-                        img: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&q=80'
-                    },
-                    {
-                        tag: 'Música & Audio',
-                        title: 'Músicos y Podcasters',
-                        desc: 'Recibí aportes por tus sets en vivo, episodios semanales o acceso anticipado a tus temas.',
-                        img: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&q=80'
-                    },
-                    {
-                        tag: 'Arte & Lifestyle',
-                        title: 'Artistas y Creadores',
-                        desc: 'Ofrecé contenido exclusivo, recetas, rutinas o ilustraciones a tu comunidad más fiel.',
-                        img: 'https://images.unsplash.com/photo-1577219491135-ce391730fb2c?auto=format&fit=crop&w=600&q=80'
-                    }
+                    { tag: 'Gaming & Streams', title: 'Streamers y Gamers', desc: 'Financiá mejoras para tu PC, periféricos o sorteos con el apoyo en vivo de tus viewers.', img: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600&q=80' },
+                    { tag: 'Software & Tech', title: 'Devs y Educadores', desc: 'Monetizá tus tutoriales, repositorios open-source, plantillas y asesorías técnicas.', img: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&q=80' },
+                    { tag: 'Música & Audio', title: 'Músicos y Podcasters', desc: 'Recibí aportes por tus sets en vivo, episodios semanales o acceso anticipado a tus temas.', img: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&q=80' },
+                    { tag: 'Arte & Lifestyle', title: 'Artistas y Creadores', desc: 'Ofrecé contenido exclusivo, recetas, rutinas o ilustraciones a tu comunidad más fiel.', img: 'https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=600&q=80' }
                 ],
 
                 platformTestimonials: [
-                    {
-                        id: 1,
-                        name: 'SneakBtw',
-                        role: 'Desarrollador & Creador Tech',
-                        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200',
-                        quote: 'Armé mi página en dos minutos. Puse la meta para actualizar la placa de video del estudio y la comunidad respondió al instante con mensajes increíbles.'
-                    },
-                    {
-                        id: 2,
-                        name: 'Lucas M.',
-                        role: 'Streamer & Podcaster',
-                        avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
-                        quote: 'Lo mejor es que la gente entra desde mi Instagram y aporta directo con Mercado Pago sin tener que bajarse ninguna aplicación ni hacerse una cuenta.'
-                    },
-                    {
-                        id: 3,
-                        name: 'Camila V.',
-                        role: 'Ilustradora Digital',
-                        avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200',
-                        quote: 'Además de los aportes sueltos, activé las membresías mensuales para compartir mis procesos de dibujo y hoy es mi ingreso principal.'
-                    }
+                    { id: 1, name: 'SneakBtw', role: 'Desarrollador & Creador Tech', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200', quote: 'Armé mi página en dos minutos. Puse la meta para actualizar la placa de video del estudio y la comunidad respondió al instante con mensajes increíbles.' },
+                    { id: 2, name: 'Lucas M.', role: 'Streamer & Podcaster', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200', quote: 'Lo mejor es que la gente entra desde mi Instagram y aporta directo con Mercado Pago sin tener que bajarse ninguna aplicación ni hacerse una cuenta.' },
+                    { id: 3, name: 'Camila V.', role: 'Ilustradora Digital', avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200', quote: 'Además de los aportes sueltos, activé las membresías mensuales para compartir mis procesos de dibujo y hoy es mi ingreso principal.' }
                 ],
 
                 faqs: [
-                    {
-                        id: 1,
-                        question: '¿Cómo recibir aportes y donaciones con Mercado Pago en Argentina?',
-                        answer: 'En Membry solo tenés que crear tu página gratis y vincular tu cuenta de Mercado Pago con un clic. Cuando un seguidor te envía un aporte único o se suscribe a tu membresía mensual, el dinero en pesos argentinos se acredita directamente en tu saldo de Mercado Pago de forma inmediata y sin intermediarios.'
-                    },
-                    {
-                        id: 2,
-                        question: '¿Qué diferencia hay entre Membry y otras plataformas como Cafecito, Tecito o Patreon?',
-                        answer: 'A diferencia de Patreon (que cobra en dólares y exige tarjeta internacional), Membry opera 100% en pesos argentinos con Mercado Pago. Y frente a opciones locales como Cafecito o Tecito, Membry suma membresías mensuales recurrentes, estética Dark Mode pensada para streamers y creadores tech, metas de ahorro interactivas y trazabilidad completa sin obligar a tus fans a registrarse.'
-                    },
-                    {
-                        id: 3,
-                        question: '¿Cuánto cuesta usar Membry y qué comisiones tiene?',
-                        answer: 'Crear y mantener tu página en Membry es 100% gratis: no hay costos de apertura ni abonos fijos mensuales. Únicamente se descuenta una comisión tecnológica del 5% sobre los aportes exitosos que recibas (adicional a la tasa estándar de procesamiento de Mercado Pago).'
-                    },
-                    {
-                        id: 4,
-                        question: '¿Mis seguidores necesitan descargar una app o crearse una cuenta para apoyarme?',
-                        answer: 'No. Membry está diseñada como una Web App (PWA) sin fricciones. Tus seguidores entran desde el link de tu biografía en Instagram, TikTok, Twitch o YouTube, eligen la cantidad de aportes, dejan su mensaje público para el muro de reseñas y pagan en segundos desde el navegador del celular.'
-                    },
-                    {
-                        id: 5,
-                        question: '¿Es seguro operar en Membry y cómo se protegen mis datos?',
-                        answer: 'Totalmente. Membry no almacena datos de tarjetas de crédito ni retiene tu dinero, ya que los pagos ocurren dentro del entorno encriptado de Mercado Pago. Además, cumplimos estrictamente con la Ley N° 25.326 de Protección de Datos Personales de Argentina y contamos con un sistema de auditoría en tiempo real.'
-                    }
+                    { id: 1, question: '¿Cómo recibir aportes y donaciones con Mercado Pago en Argentina?', answer: 'En Membry solo tenés que crear tu página gratis y vincular tu cuenta de Mercado Pago con un clic. Cuando un seguidor te envía un aporte único o se suscribe a tu membresía mensual, el dinero en pesos argentinos se acredita directamente en tu saldo de Mercado Pago de forma inmediata y sin intermediarios.' },
+                    { id: 2, question: '¿Qué diferencia hay entre Membry y otras plataformas como Cafecito, Tecito o Patreon?', answer: 'A diferencia de Patreon (que cobra en dólares y exige tarjeta internacional), Membry opera 100% en pesos argentinos con Mercado Pago. Y frente a opciones locales como Cafecito o Tecito, Membry suma membresías mensuales recurrentes, estética Dark Mode pensada para streamers y creadores tech, metas de ahorro interactivas y trazabilidad completa sin obligar a tus fans a registrarse.' },
+                    { id: 3, question: '¿Cuánto cuesta usar Membry y qué comisiones tiene?', answer: 'Crear y mantener tu página en Membry es 100% gratis: no hay costos de apertura ni abonos fijos mensuales. Únicamente se descuenta una comisión tecnológica del 5% sobre los aportes exitosos que recibas (adicional a la tasa estándar de procesamiento de Mercado Pago).' },
+                    { id: 4, question: '¿Mis seguidores necesitan descargar una app o crearse una cuenta para apoyarme?', answer: 'No. Membry está diseñada como una Web App (PWA) sin fricciones. Tus seguidores entran desde el link de tu biografía en Instagram, TikTok, Twitch o YouTube, eligen la cantidad de aportes, dejan su mensaje público para el muro de reseñas y pagan en segundos desde el navegador del celular.' },
+                    { id: 5, question: '¿Es seguro operar en Membry y cómo se protegen mis datos?', answer: 'Totalmente. Membry no almacena datos de tarjetas de crédito ni retiene tu dinero, ya que los pagos ocurren dentro del entorno encriptado de Mercado Pago. Además, cumplimos estrictamente con la Ley N° 25.326 de Protección de Datos Personales de Argentina y contamos con un sistema de auditoría en tiempo real.' }
                 ],
                 
                 creator: { 
-                    id: '1', 
+                    id: '11111111-1111-1111-1111-111111111111', 
                     username: 'sneakbtw',
                     display_name: 'SneakBtw', 
                     bio: 'Creador de contenido digital, desarrollo de software y tecnología. ¡Gracias por bancar el proyecto con tu aporte!', 
@@ -919,6 +709,7 @@
                 coffeePrice: 1500,
                 supporterName: '',
                 supporterMessage: '',
+                supporterEmail: '',  // 👈 NUEVA VARIABLE
 
                 publicReviews: [
                     { id: 1, name: 'Martín G.', coffees: 3, message: '¡Excelente contenido! Me sirvió muchísimo el último video que subiste.', reply: '¡Muchas gracias Martín! Se vienen más tutoriales esta semana.', date: 'Hace 2 horas' },
@@ -941,7 +732,6 @@
                     this.loadCreatorData();
                 },
 
-                // Obtiene los textos legales desde las variables del Backend y los congela
                 async loadLegalConfig() {
                     try {
                         const res = await fetch('/api/legal');
@@ -979,13 +769,17 @@
                         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
                     });
 
+                    // Solo enviamos al backend si estamos logueados (endpoint protegido)
+                    if (!this.authToken) return;
+
                     try {
                         await fetch('/api/audit', {
                             method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
+                            headers: { 
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${this.authToken}`
+                            },
                             body: JSON.stringify({
-                                user_id: this.currentUser?.id || null,
-                                user_email: this.currentUser?.email || this.email || null,
                                 action,
                                 details: { summary, legal_version: this.legalData.config.version, ...details }
                             })
@@ -994,9 +788,11 @@
                 },
 
                 async loadAuditLogs() {
-                    if (!this.currentUser?.id) return;
+                    if (!this.currentUser?.id || !this.authToken) return;
                     try {
-                        const res = await fetch(`/api/audit/${this.currentUser.id}`);
+                        const res = await fetch(`/api/audit/${this.currentUser.id}`, {
+                            headers: { 'Authorization': `Bearer ${this.authToken}` }
+                        });
                         const data = await res.json();
                         if (data.success && data.logs?.length) {
                             this.auditLogs = data.logs.map(l => ({
@@ -1014,9 +810,7 @@
                 navigate(view) {
                     this.currentView = view;
                     this.logEvent('VIEW_NAVIGATION', `Navegación hacia la vista: ${view}`, { view });
-                    if (view === 'dashboard') {
-                        this.loadAuditLogs();
-                    }
+                    if (view === 'dashboard') this.loadAuditLogs();
                 },
 
                 goToAuth(mode) {
@@ -1058,6 +852,7 @@
                             this.showToast(data.error || 'Credenciales inválidas');
                         }
                     } catch (e) {
+                        // Fallback demo si el backend no está disponible
                         this.isLoggedIn = true;
                         this.currentUser = { id: 'demo-id', email: this.email, role: 'creator', display_name: 'SneakBtw', username: 'sneakbtw' };
                         this.currentView = 'dashboard';
@@ -1127,9 +922,10 @@
                         }
                     } catch (e) {}
                     
+                    // Fallback si el backend no responde
                     this.tiers = [
-                        { id: 1, name: 'Comunidad VIP', price: 4500, desc: 'Acceso a directos privados, Discord exclusivo y sorteos mensuales.', is_popular: true },
-                        { id: 2, name: 'Sponsor Oficial', price: 12000, desc: 'Tu nombre en los créditos de cada video y mentoría grupal.', is_popular: false }
+                        { id: 'tier-vip', name: 'Comunidad VIP', price: 4500, desc: 'Acceso a directos privados, Discord exclusivo y sorteos mensuales.', is_popular: true },
+                        { id: 'tier-sponsor', name: 'Sponsor Oficial', price: 12000, desc: 'Tu nombre en los créditos de cada video y mentoría grupal.', is_popular: false }
                     ];
                     this.transactions = [
                         { id: 1, supporter_name: 'Martín G.', type: 'one_time', net_amount: 4140 },
@@ -1137,33 +933,61 @@
                     ];
                 },
 
-                async processPayment(title, amount, type) {
+                async processPayment(title, amount, type, tier = null) {
                     const donor = this.supporterName.trim() || 'Anónimo';
+                    
+                    // Validación: si es suscripción, exigir email
+                    if (type === 'subscription' && !this.supporterEmail.trim()) {
+                        this.showToast('Necesitás ingresar tu email para suscribirte');
+                        return;
+                    }
+
                     this.logEvent('PAYMENT_INTENT', `Intento de pago: ${title} ($${amount}) por ${donor}`, { title, amount, type, donor });
                     this.showToast('Generando link de Mercado Pago...');
-                    
-                    setTimeout(() => {
-                        if (type === 'one_time') {
-                            const netFactor = (100 - (this.legalData.config.platformFeePercent + 3)) / 100;
-                            this.publicReviews.unshift({
-                                id: Date.now(),
-                                name: donor,
-                                coffees: this.coffeeCount,
-                                message: this.supporterMessage.trim() || '¡Gracias por el contenido!',
-                                reply: null,
-                                date: 'Hace un instante'
+
+                    try {
+                        if (type === 'subscription' && tier) {
+                            // SUSCRIPCIÓN REAL
+                            const res = await fetch('/api/subscribe', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    creator_id: this.creator.id,
+                                    tier_id: tier.id,
+                                    supporter_email: this.supporterEmail.trim(),
+                                    supporter_name: donor
+                                })
                             });
-                            this.creator.goal_current += amount;
-                            this.creator.supporters_count += this.coffeeCount;
-                            this.supporterName = '';
-                            this.supporterMessage = '';
-                            this.creator.balance += (amount * netFactor);
+                            const data = await res.json();
+                            if (data.init_point) {
+                                window.location.href = data.init_point;
+                            } else {
+                                this.showToast(data.error || 'Error creando suscripción');
+                            }
                         } else {
-                            this.creator.balance += (amount * 0.92);
+                            // PAGO ÚNICO
+                            const res = await fetch('/api/checkout', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    creator_id: this.creator.id,
+                                    title: title,
+                                    amount: amount,
+                                    supporter_name: donor,
+                                    message: this.supporterMessage
+                                })
+                            });
+                            const data = await res.json();
+                            if (data.checkout_url) {
+                                window.location.href = data.checkout_url;
+                            } else {
+                                this.showToast(data.error || 'Error creando pago');
+                            }
                         }
-                        this.logEvent('PAYMENT_APPROVED', `Pago acreditado: ${title} ($${amount})`, { amount });
-                        this.showToast('¡Aporte acreditado en el muro!');
-                    }, 900);
+                    } catch (err) {
+                        console.error(err);
+                        this.showToast('Error de conexión con el servidor');
+                    }
                 },
 
                 showToast(msg) {
