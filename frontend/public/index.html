@@ -90,62 +90,101 @@
         </div>
     </div>
 
-    <!-- MODAL LEGAL -->
-    <div x-show="showLegalModal" style="display: none;" x-transition.opacity class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-        <div @click.away="showLegalModal = false" class="glass-card bg-[#0e1322] border border-blue-500/30 rounded-3xl max-w-3xl w-full max-h-[85vh] flex flex-col overflow-hidden shadow-2xl">
-            <div class="p-6 border-b border-white/10 flex justify-between items-center bg-[#0b0f19]/60">
+    <!-- ========================================================================= -->
+    <!-- MODAL DE TÉRMINOS Y CONDICIONES CON DESPLAZAMIENTO OBLIGATORIO (SCROLL)   -->
+    <!-- ========================================================================= -->
+    <div x-show="showLegalModal" 
+         style="display: none;" 
+         x-transition.opacity
+         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+        
+        <div class="glass-card bg-[#0e1322] w-full max-w-3xl rounded-3xl border border-blue-500/30 shadow-2xl overflow-hidden flex flex-col max-h-[88vh]">
+            
+            <div class="p-5 sm:p-6 border-b border-white/10 flex justify-between items-center bg-[#0b0f19]">
                 <div>
                     <div class="flex items-center gap-2">
-                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-600/20 text-cyan-400 border border-blue-500/30" x-text="legalData.config.version"></span>
+                        <span class="px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider bg-blue-600/20 text-cyan-400 border border-cyan-500/30 rounded-full" x-text="legalData.config.version"></span>
                         <span class="text-xs text-gray-400" x-text="`Actualizado: ${legalData.config.lastUpdated}`"></span>
                     </div>
-                    <h2 class="text-xl font-extrabold mt-1">Términos y Condiciones Legales y Política de Privacidad</h2>
+                    <h2 class="text-lg sm:text-xl font-extrabold text-white mt-1">Condiciones de Uso, Indemnidad y Privacidad</h2>
                 </div>
-                <button @click="showLegalModal = false" class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-white transition-colors">✕</button>
+                <button @click="declineTerms()" class="text-gray-400 hover:text-white p-2 rounded-xl bg-white/5 hover:bg-white/10 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
             </div>
-            <div class="p-6 overflow-y-auto space-y-5 text-sm leading-relaxed text-gray-300">
-                <div class="bg-blue-950/40 border border-blue-500/30 rounded-2xl p-4 text-xs text-cyan-200">
-                    <strong class="text-white block mb-1">Declaración de Indemnidad y Uso Compatible:</strong>
-                    <span x-text="`${legalData.config.platformName} opera bajo jurisdicción de ${legalData.config.jurisdiction}. El uso de esta plataforma implica la aceptación plena e incondicional de las siguientes cláusulas normativas.`"></span>
+
+            <div class="px-6 py-2.5 text-xs font-semibold flex items-center justify-between border-b transition-colors"
+                 :class="hasScrolledToBottom ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/20' : 'bg-amber-500/15 text-amber-300 border-amber-500/20'">
+                <span x-show="!hasScrolledToBottom">👇 Deslizá manualmente hasta el final del documento para habilitar el botón de aceptación.</span>
+                <span x-show="hasScrolledToBottom">✓ Has llegado al final del documento. Ya podés aceptar las condiciones.</span>
+                <span class="font-mono text-[11px] bg-black/40 px-2 py-0.5 rounded" x-text="`${scrollProgress}%`"></span>
+            </div>
+
+            <div x-ref="legalScrollBox" 
+                 @scroll="checkLegalScroll($event)" 
+                 class="p-6 overflow-y-auto space-y-4 text-sm text-gray-300 leading-relaxed select-none">
+                
+                <div class="p-4 rounded-2xl bg-blue-950/40 border border-blue-500/30 text-xs text-cyan-200">
+                    <strong class="text-white block mb-1">Declaración de Indemnidad y Acuerdo Vinculante:</strong>
+                    Este documento constituye un acuerdo legal con <strong class="text-white" x-text="legalData.config.legalOwner"></strong> (<span x-text="legalData.config.platformName"></span>), bajo jurisdicción en <span class="text-white" x-text="legalData.config.jurisdiction"></span>.
                 </div>
+
                 <template x-for="sec in legalData.sections" :key="sec.id">
-                    <div class="bg-white/[0.02] border border-white/5 rounded-2xl p-4">
-                        <h3 class="font-bold text-white text-base mb-1.5" x-text="sec.title"></h3>
+                    <div class="bg-white/[0.02] border border-white/10 rounded-2xl p-5 space-y-3">
+                        <h3 class="font-extrabold text-white text-base" x-text="sec.title"></h3>
+                        <div x-show="sec.summary" class="bg-blue-600/10 border-l-4 border-cyan-400 p-3 rounded-r-xl text-xs text-cyan-200 font-medium leading-relaxed" x-text="sec.summary"></div>
                         <p class="text-gray-300 text-xs sm:text-sm leading-relaxed" x-text="sec.body"></p>
                     </div>
                 </template>
-                <div class="bg-black/40 border border-white/10 rounded-2xl p-4 text-[11px] text-gray-400 font-mono leading-relaxed">
-                    <div class="text-cyan-400 font-bold mb-1 font-sans">AVISO LEGAL OBLIGATORIO — AGENCIA DE ACCESO A LA INFORMACIÓN PÚBLICA (LEY 25.326):</div>
+
+                <div class="p-4 rounded-2xl bg-black/40 border border-white/10 text-[11px] text-gray-400 font-mono leading-relaxed">
+                    <div class="font-bold text-cyan-400 mb-1 font-sans uppercase tracking-wider">Aviso Legal Obligatorio — Agencia de Acceso a la Información Pública (Ley N° 25.326):</div>
                     <p x-text="legalData.config.aaipMandatoryNotice"></p>
                 </div>
             </div>
-            <div class="p-4 border-t border-white/10 bg-[#0b0f19]/80 flex flex-col sm:flex-row justify-between items-center gap-3">
-                <span class="text-[11px] text-gray-400" x-text="`Titular Legal: ${legalData.config.legalOwner} • Contacto: ${legalData.config.contactEmail}`"></span>
-                <button @click="acceptTermsFromModal()" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-2.5 rounded-xl text-xs transition-all">He leído y comprendo los Términos Legales</button>
+
+            <div class="p-5 border-t border-white/10 bg-[#0b0f19] flex flex-col sm:flex-row justify-between items-center gap-3">
+                <span class="text-[11px] text-gray-400 text-center sm:text-left" x-text="`Titular Legal: ${legalData.config.legalOwner} • Contacto: ${legalData.config.contactEmail}`"></span>
+                
+                <div class="flex items-center gap-3 w-full sm:w-auto">
+                    <button type="button" @click="declineTerms()" class="w-1/2 sm:w-auto px-4 py-3 rounded-xl text-xs font-bold text-gray-400 bg-white/5 hover:bg-white/10 transition-all">
+                        Cancelar
+                    </button>
+                    
+                    <button type="button" 
+                            :disabled="!hasScrolledToBottom"
+                            @click="acceptTermsAfterScroll()" 
+                            class="w-1/2 sm:w-auto px-6 py-3 rounded-xl text-xs sm:text-sm font-extrabold transition-all flex items-center justify-center gap-2"
+                            :class="hasScrolledToBottom ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_20px_rgba(37,99,235,0.4)] cursor-pointer active:scale-95' : 'bg-gray-800 text-gray-500 border border-white/5 cursor-not-allowed opacity-70'">
+                        <span x-show="!hasScrolledToBottom">🔒 Deslizá hasta el final</span>
+                        <span x-show="hasScrolledToBottom">Acepto ser +18 y las Condiciones</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- HEADER -->
-    <header x-show="currentView !== 'auth'" class="sticky top-0 z-30 w-full bg-[#0b0f19]/85 backdrop-blur-md border-b border-white/5 px-4 sm:px-8 lg:px-10 py-3.5">
-        <div class="w-full flex justify-between items-center">
-            <button @click="navigate('landing')" class="flex items-center gap-2.5 text-left group">
-                <div class="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(37,99,235,0.5)] group-hover:scale-105 transition-transform">
-                    <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+    <!-- HEADER SUPERIOR MINIMALISTA -->
+    <header x-show="currentView !== 'auth'" class="sticky top-0 z-30 w-full bg-[#0b0f19]/85 backdrop-blur-md border-b border-white/5 px-4 py-3">
+        <div class="w-full flex justify-between items-center max-w-6xl mx-auto">
+            <button @click="navigate('landing')" class="flex items-center gap-2 text-left group">
+                <div class="w-8 h-8 bg-blue-600 rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(37,99,235,0.5)]">
+                    <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                 </div>
-                <span class="font-extrabold text-xl tracking-tight" x-text="legalData.config.platformName"></span>
+                <span class="font-extrabold text-lg tracking-tight" x-text="legalData.config.platformName"></span>
             </button>
-            <div class="flex items-center gap-3">
+            
+            <div class="hidden sm:flex items-center gap-4">
                 <template x-if="!isLoggedIn">
-                    <div class="flex items-center gap-2 sm:gap-4">
-                        <button @click="goToAuth('login')" class="text-xs sm:text-sm font-semibold text-gray-300 hover:text-white px-3 py-2 transition-colors">Ingresar</button>
-                        <button @click="goToAuth('register')" class="text-xs sm:text-sm font-bold bg-blue-600 hover:bg-blue-500 text-white px-4 sm:px-5 py-2.5 rounded-xl shadow-[0_0_15px_rgba(37,99,235,0.4)] transition-all active:scale-95">Crear mi página</button>
+                    <div class="flex items-center gap-3">
+                        <button @click="goToAuth('login')" class="text-sm font-semibold text-gray-300 hover:text-white px-3 py-2 transition-colors">Ingresar</button>
+                        <button @click="goToAuth('register')" class="text-sm font-bold bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl shadow-[0_0_15px_rgba(37,99,235,0.4)] transition-all">Crear mi página</button>
                     </div>
                 </template>
                 <template x-if="isLoggedIn">
                     <div class="flex items-center gap-3">
-                        <span class="text-xs text-cyan-400 font-semibold hidden sm:inline" x-text="`Hola, ${currentUser?.display_name}`"></span>
-                        <button @click="logout()" class="text-xs font-bold text-red-400 bg-red-500/10 border border-red-500/20 px-3.5 py-2 rounded-xl hover:bg-red-500/20 transition-all">Salir</button>
+                        <span class="text-xs text-cyan-400 font-semibold" x-text="`Hola, ${currentUser?.display_name}`"></span>
+                        <button @click="logout()" class="text-xs font-bold text-red-400 bg-red-500/10 border border-red-500/20 px-3.5 py-2 rounded-xl">Salir</button>
                     </div>
                 </template>
             </div>
@@ -174,37 +213,82 @@
                         <span class="text-gray-400 font-semibold text-sm select-none">membry.app/</span>
                         <input type="text" x-model="username" placeholder="tu_nombre" class="bg-transparent text-white font-bold text-sm focus:outline-none w-full placeholder-gray-600">
                     </div>
-                    <button @click="goToAuth('register')" class="w-full sm:w-auto shrink-0 bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3.5 rounded-xl transition-all active:scale-95 text-sm shadow-lg">Comenzar gratis</button>
+                    <button @click="startRegistration()" class="w-full sm:w-auto shrink-0 bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3.5 rounded-xl transition-all active:scale-95 text-sm shadow-lg">Comenzar gratis</button>
                 </div>
                 <p class="text-xs text-gray-500">Crear tu página es 100% gratis. Sin costos fijos mensuales.</p>
             </section>
 
-            <section class="max-w-6xl mx-auto px-4 py-12">
-                <div class="text-center mb-12">
+            <!-- CÓMO FUNCIONA CON SCROLL REVEAL -->
+            <section class="max-w-6xl mx-auto px-4 py-12"
+                     x-data="{ shown: false }"
+                     x-init="window.addEventListener('scroll', () => { 
+                         let top = $el.getBoundingClientRect().top; 
+                         if(top < window.innerHeight - 80) shown = true; 
+                     }, { once: true })">
+                
+                <div class="text-center mb-12 transition-all duration-700 transform"
+                     :class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'">
                     <h2 class="text-2xl sm:text-3xl font-extrabold mb-3">¿Cómo funciona Membry?</h2>
                     <p class="text-gray-400 text-sm sm:text-base max-w-xl mx-auto">Diseñado sin fricciones para que tus seguidores puedan apoyarte en tres toques desde el celular sin descargar nada.</p>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="glass-card rounded-3xl p-7 relative overflow-hidden">
-                        <div class="w-12 h-12 bg-blue-600/20 border border-blue-500/30 text-blue-400 font-extrabold text-xl rounded-2xl flex items-center justify-center mb-5">1</div>
-                        <h3 class="text-xl font-bold mb-2">Creá tu perfil en 1 minuto</h3>
-                        <p class="text-gray-400 text-sm leading-relaxed">Personalizá tu portada, contá quién sos, fijá el valor de tu aporte y configurá una barra de meta para mostrar para qué estás ahorrando.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    
+                    <div class="glass-card rounded-3xl p-6 relative overflow-hidden group hover:border-blue-500/40 transition-all duration-700 transform"
+                         :class="shown ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12'">
+                        <div class="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent"></div>
+                        <span class="absolute -right-2 -top-4 text-7xl font-extrabold text-white/[0.03] group-hover:text-blue-500/[0.08] transition-colors select-none pointer-events-none">01</span>
+                        <div class="flex items-center gap-3 mb-4 relative z-10">
+                            <div class="w-11 h-11 rounded-2xl bg-blue-600/15 border border-blue-500/30 flex items-center justify-center text-blue-400 shadow-[0_0_20px_rgba(37,99,235,0.2)] group-hover:scale-105 transition-transform">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                            </div>
+                            <span class="text-[11px] font-extrabold uppercase tracking-wider text-blue-400 bg-blue-500/10 border border-blue-500/20 px-2.5 py-1 rounded-full">Paso 01</span>
+                        </div>
+                        <h3 class="text-lg font-extrabold text-white mb-2 relative z-10">Creá tu perfil en 1 minuto</h3>
+                        <p class="text-gray-400 text-xs sm:text-sm leading-relaxed relative z-10">Personalizá tu portada, elegí el ícono de tu rubro y configurá una barra de meta para mostrarle a tu comunidad tu próximo objetivo.</p>
                     </div>
-                    <div class="glass-card rounded-3xl p-7 relative overflow-hidden">
-                        <div class="w-12 h-12 bg-cyan-500/20 border border-cyan-500/30 text-cyan-400 font-extrabold text-xl rounded-2xl flex items-center justify-center mb-5">2</div>
-                        <h3 class="text-xl font-bold mb-2">Compartí tu link en redes</h3>
-                        <p class="text-gray-400 text-sm leading-relaxed">Colocá tu enlace único en tu biografía de Instagram, TikTok, Twitch o YouTube. Tus fans entran directo sin necesidad de registrarse.</p>
+
+                    <div class="glass-card rounded-3xl p-6 relative overflow-hidden group hover:border-cyan-500/40 transition-all duration-700 delay-150 transform"
+                         :class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
+                        <div class="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent"></div>
+                        <span class="absolute -right-2 -top-4 text-7xl font-extrabold text-white/[0.03] group-hover:text-cyan-400/[0.08] transition-colors select-none pointer-events-none">02</span>
+                        <div class="flex items-center gap-3 mb-4 relative z-10">
+                            <div class="w-11 h-11 rounded-2xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.2)] group-hover:scale-105 transition-transform">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                            </div>
+                            <span class="text-[11px] font-extrabold uppercase tracking-wider text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-2.5 py-1 rounded-full">Paso 02</span>
+                        </div>
+                        <h3 class="text-lg font-extrabold text-white mb-2 relative z-10">Compartí tu link en redes</h3>
+                        <p class="text-gray-400 text-xs sm:text-sm leading-relaxed relative z-10">Colocá tu enlace único en tu biografía de Instagram, TikTok, Twitch o YouTube. Tus seguidores entran directo sin registrarse.</p>
                     </div>
-                    <div class="glass-card rounded-3xl p-7 relative overflow-hidden">
-                        <div class="w-12 h-12 bg-blue-600/20 border border-blue-500/30 text-blue-400 font-extrabold text-xl rounded-2xl flex items-center justify-center mb-5">3</div>
-                        <h3 class="text-xl font-bold mb-2">Recibí pagos y mensajes</h3>
-                        <p class="text-gray-400 text-sm leading-relaxed">Tu comunidad te envía aportes con mensajes de apoyo públicos o se suscribe a tus membresías VIP. El dinero va directo a tu Mercado Pago.</p>
+
+                    <div class="glass-card rounded-3xl p-6 relative overflow-hidden group hover:border-blue-500/40 transition-all duration-700 delay-300 transform"
+                         :class="shown ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'">
+                        <div class="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent"></div>
+                        <span class="absolute -right-2 -top-4 text-7xl font-extrabold text-white/[0.03] group-hover:text-blue-500/[0.08] transition-colors select-none pointer-events-none">03</span>
+                        <div class="flex items-center gap-3 mb-4 relative z-10">
+                            <div class="w-11 h-11 rounded-2xl bg-blue-600/15 border border-blue-500/30 flex items-center justify-center text-cyan-300 shadow-[0_0_20px_rgba(37,99,235,0.2)] group-hover:scale-105 transition-transform">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            </div>
+                            <span class="text-[11px] font-extrabold uppercase tracking-wider text-cyan-300 bg-blue-500/10 border border-blue-500/20 px-2.5 py-1 rounded-full">Paso 03</span>
+                        </div>
+                        <h3 class="text-lg font-extrabold text-white mb-2 relative z-10">Recibí pagos y mensajes</h3>
+                        <p class="text-gray-400 text-xs sm:text-sm leading-relaxed relative z-10">Tu comunidad te envía aportes con mensajes públicos o se suscribe a tus membresías VIP. El dinero va directo a tu Mercado Pago.</p>
                     </div>
+
                 </div>
             </section>
 
-            <section class="max-w-6xl mx-auto px-4 py-14">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
+            <!-- CATEGORÍAS CON SCROLL REVEAL -->
+            <section class="max-w-6xl mx-auto px-4 py-14"
+                     x-data="{ shown: false }"
+                     x-init="window.addEventListener('scroll', () => { 
+                         let top = $el.getBoundingClientRect().top; 
+                         if(top < window.innerHeight - 80) shown = true; 
+                     }, { once: true })">
+                
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4 transition-all duration-700 transform"
+                     :class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'">
                     <div>
                         <span class="text-xs font-bold uppercase tracking-wider text-cyan-400">Para todo tipo de talento</span>
                         <h2 class="text-2xl sm:text-3xl font-extrabold mt-1">¿Quiénes usan Membry?</h2>
@@ -213,9 +297,13 @@
                         <span>Ver ejemplo de página de creador en vivo</span><span>→</span>
                     </button>
                 </div>
+
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                    <template x-for="cat in creatorCategories" :key="cat.title">
-                        <div class="glass-card rounded-3xl overflow-hidden group hover:border-blue-500/40 transition-all flex flex-col">
+                    <template x-for="(cat, index) in creatorCategories" :key="cat.title">
+                        <div class="glass-card rounded-3xl overflow-hidden group hover:border-blue-500/40 transition-all duration-700 transform flex flex-col"
+                             :style="`transition-delay: ${index * 120}ms`"
+                             :class="shown ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-12 scale-95'">
+                            
                             <div class="h-44 overflow-hidden relative">
                                 <img :src="cat.img" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                                 <div class="absolute inset-0 bg-gradient-to-t from-[#0b0f19] via-transparent to-transparent"></div>
@@ -235,14 +323,25 @@
                 </div>
             </section>
 
-            <section class="max-w-6xl mx-auto px-4 py-12">
-                <div class="text-center mb-10">
+            <!-- TESTIMONIOS CON SCROLL REVEAL -->
+            <section class="max-w-6xl mx-auto px-4 py-12"
+                     x-data="{ shown: false }"
+                     x-init="window.addEventListener('scroll', () => { 
+                         let top = $el.getBoundingClientRect().top; 
+                         if(top < window.innerHeight - 80) shown = true; 
+                     }, { once: true })">
+                
+                <div class="text-center mb-10 transition-all duration-700 transform"
+                     :class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'">
                     <span class="text-xs font-bold uppercase tracking-wider text-blue-400">Comunidad Verificada</span>
                     <h2 class="text-2xl sm:text-3xl font-extrabold mt-1">Lo que dicen nuestros creadores</h2>
                 </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <template x-for="item in platformTestimonials" :key="item.id">
-                        <div class="glass-card rounded-3xl p-6 flex flex-col justify-between relative">
+                    <template x-for="(item, index) in platformTestimonials" :key="item.id">
+                        <div class="glass-card rounded-3xl p-6 flex flex-col justify-between relative transition-all duration-700 transform"
+                             :style="`transition-delay: ${index * 150}ms`"
+                             :class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-14'">
                             <div>
                                 <div class="flex gap-1 text-cyan-400 mb-4">
                                     <template x-for="i in 5"><svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg></template>
@@ -261,13 +360,22 @@
                 </div>
             </section>
 
-            <section class="max-w-4xl mx-auto px-4 py-12" x-data="{ activeFaq: 1 }">
-                <div class="text-center mb-10">
+            <!-- FAQ CON SCROLL REVEAL -->
+            <section class="max-w-4xl mx-auto px-4 py-12" x-data="{ activeFaq: 1, shown: false }"
+                     x-init="window.addEventListener('scroll', () => { 
+                         let top = $el.getBoundingClientRect().top; 
+                         if(top < window.innerHeight - 80) shown = true; 
+                     }, { once: true })">
+                
+                <div class="text-center mb-10 transition-all duration-700 transform"
+                     :class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'">
                     <span class="text-xs font-bold uppercase tracking-wider text-cyan-400">Todo claro desde el inicio</span>
                     <h2 class="text-2xl sm:text-3xl font-extrabold mt-1">Preguntas Frecuentes sobre Membry</h2>
                     <p class="text-gray-400 text-sm mt-2">Respuestas rápidas sobre cobros con Mercado Pago, membresías y comisiones en Argentina.</p>
                 </div>
-                <div class="space-y-3.5">
+
+                <div class="space-y-3.5 transition-all duration-1000 transform"
+                     :class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'">
                     <template x-for="faq in faqs" :key="faq.id">
                         <div class="glass-card rounded-2xl overflow-hidden transition-all duration-200" :class="activeFaq === faq.id ? 'border-blue-500/40 bg-white/[0.04]' : 'hover:border-white/15'">
                             <button @click="activeFaq = (activeFaq === faq.id ? null : faq.id); logEvent('FAQ_OPENED', `Consulta FAQ: ${faq.question}`)" class="w-full p-5 text-left flex justify-between items-center gap-4">
@@ -297,68 +405,202 @@
             </section>
         </div>
 
-        <!-- ========== VISTA AUTH ========== -->
-        <div x-show="currentView === 'auth'" style="display: none;" x-transition class="fixed inset-0 z-40 bg-[#0b0f19] flex flex-col justify-center px-6 overflow-hidden h-[100dvh]">
-            <div class="absolute top-[-10%] left-[-10%] w-72 h-72 bg-blue-600/20 rounded-full blur-[80px] pointer-events-none animate-float"></div>
-            <div class="absolute bottom-[-10%] right-[-10%] w-72 h-72 bg-cyan-500/10 rounded-full blur-[80px] pointer-events-none animate-float-delayed"></div>
-            <div class="absolute top-6 left-6 z-20">
-                <button @click="navigate('landing')" class="text-xs font-semibold text-gray-300 hover:text-white bg-white/5 border border-white/10 px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition-all"><span>← Volver al inicio</span></button>
+        <!-- ========== VISTA AUTH (OPTIMIZADA MÓVIL Y DESKTOP) ========== -->
+        <div x-show="currentView === 'auth'" 
+             style="display: none;" 
+             x-transition.opacity 
+             x-data="{ showPass: false }"
+             class="fixed inset-0 z-40 bg-[#0b0f19] flex flex-col justify-start px-5 py-6 overflow-y-auto min-h-[100dvh]">
+            
+            <div class="fixed top-[-10%] left-[-10%] w-72 h-72 bg-blue-600/20 rounded-full blur-[90px] pointer-events-none animate-float"></div>
+            <div class="fixed bottom-[-10%] right-[-10%] w-72 h-72 bg-cyan-500/10 rounded-full blur-[90px] pointer-events-none animate-float-delayed"></div>
+
+            <!-- TOP APP BAR: Flecha izquierda y Rayo derecho -->
+            <div class="relative z-20 w-full max-w-md mx-auto flex items-center justify-between pt-1">
+                <button type="button" 
+                        @click="navigate('landing')" 
+                        aria-label="Volver atrás"
+                        class="w-11 h-11 rounded-2xl bg-blue-600/15 border border-blue-500/30 text-cyan-400 hover:bg-blue-600 hover:text-white hover:border-blue-400 flex items-center justify-center transition-all duration-300 active:scale-90 shadow-[0_0_20px_rgba(37,99,235,0.2)]">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                </button>
+
+                <span class="text-[11px] font-bold uppercase tracking-widest text-gray-500 select-none">Acceso Seguro</span>
+
+                <div class="w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-500"
+                     :class="isFormValid() ? 'scale-110 bg-gradient-to-tr from-blue-600 to-cyan-400 shadow-[0_0_30px_rgba(6,182,212,0.85)] animate-pulse border border-cyan-300/50' : 'bg-blue-600/20 border border-blue-500/30 shadow-[0_0_20px_rgba(37,99,235,0.25)]'">
+                    <svg class="w-5 h-5 transition-transform duration-500" 
+                         :class="isFormValid() ? 'rotate-12 scale-110 text-slate-950 fill-current' : 'text-cyan-400'" 
+                         fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                </div>
             </div>
-            <div class="relative z-10 w-full max-w-md mx-auto flex flex-col justify-center h-full">
-                <div class="text-center mb-5">
-                    <div class="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-[0_0_30px_rgba(37,99,235,0.4)]">
-                        <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                    </div>
-                    <h2 class="text-2xl font-bold tracking-tight" x-text="authMode === 'login' ? 'Bienvenido a Membry' : 'Creá tu página en Membry'"></h2>
-                    <p class="text-gray-400 mt-1 text-xs" x-text="authMode === 'login' ? 'Ingresá tus credenciales para continuar' : 'Completá tus datos para empezar hoy mismo'"></p>
+
+            <!-- CUERPO CENTRAL (TÍTULO BIENVENIDO CENTRADO Y MÁS ARRIBA) -->
+            <div class="relative z-10 w-full max-w-md mx-auto mt-8 sm:my-auto pb-6">
+                
+                <div class="text-center mb-7">
+                    <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white" 
+                        x-text="authMode === 'login' ? 'Bienvenido' : 'Creá tu cuenta'"></h2>
+                    <p class="text-gray-400 mt-1.5 text-xs sm:text-sm" 
+                       x-text="authMode === 'login' ? 'Ingresá tus credenciales para continuar' : 'Configurá tu perfil en menos de un minuto'"></p>
                 </div>
-                <div class="flex bg-white/5 border border-white/10 rounded-xl p-1 mb-4">
-                    <button @click="authMode = 'login'" :class="{'bg-blue-600 text-white shadow-md': authMode === 'login', 'text-gray-400 hover:text-white': authMode !== 'login'}" class="flex-1 py-2 text-sm font-semibold rounded-lg transition-all">Ingresar</button>
-                    <button @click="authMode = 'register'" :class="{'bg-blue-600 text-white shadow-md': authMode === 'register', 'text-gray-400 hover:text-white': authMode !== 'register'}" class="flex-1 py-2 text-sm font-semibold rounded-lg transition-all">Registrarse</button>
+
+                <div class="flex bg-black/40 border border-white/10 rounded-2xl p-1.5 mb-5">
+                    <button type="button" 
+                            @click="authMode = 'login'" 
+                            :class="authMode === 'login' ? 'bg-blue-600 text-white shadow-[0_0_15px_rgba(37,99,235,0.4)]' : 'text-gray-400 hover:text-white'" 
+                            class="flex-1 py-2.5 text-xs sm:text-sm font-bold rounded-xl transition-all">
+                        Ingresar
+                    </button>
+                    <button type="button" 
+                            @click="authMode = 'register'" 
+                            :class="authMode === 'register' ? 'bg-blue-600 text-white shadow-[0_0_15px_rgba(37,99,235,0.4)]' : 'text-gray-400 hover:text-white'" 
+                            class="flex-1 py-2.5 text-xs sm:text-sm font-bold rounded-xl transition-all">
+                        Registrarse
+                    </button>
                 </div>
-                <div class="space-y-3">
-                    <div x-show="authMode === 'register'" class="flex gap-2 mb-1">
-                        <label class="flex-1 flex flex-col items-center p-2.5 border rounded-xl cursor-pointer transition-all" :class="regRole === 'consumer' ? 'border-blue-500 bg-blue-500/10' : 'border-white/10 bg-black/30'">
+
+                <div class="space-y-3.5">
+                    
+                    <div x-show="authMode === 'register'" class="grid grid-cols-2 gap-2.5">
+                        <label class="flex flex-col items-center p-3 border rounded-2xl cursor-pointer transition-all text-center" 
+                               :class="regRole === 'consumer' ? 'border-blue-500 bg-blue-500/15 shadow-[0_0_15px_rgba(59,130,246,0.15)]' : 'border-white/10 bg-black/30 opacity-70 hover:opacity-100'">
                             <input type="radio" x-model="regRole" value="consumer" class="hidden">
-                            <span class="text-sm font-bold">Seguidor</span>
-                            <span class="text-[10px] text-gray-400">Explorar y apoyar</span>
+                            <span class="text-xs sm:text-sm font-extrabold text-white">Seguidor</span>
+                            <span class="text-[10px] text-gray-400 mt-0.5">Explorar y apoyar</span>
                         </label>
-                        <label class="flex-1 flex flex-col items-center p-2.5 border rounded-xl cursor-pointer transition-all" :class="regRole === 'creator' ? 'border-cyan-500 bg-cyan-500/10' : 'border-white/10 bg-black/30'">
+                        <label class="flex flex-col items-center p-3 border rounded-2xl cursor-pointer transition-all text-center" 
+                               :class="regRole === 'creator' ? 'border-cyan-400 bg-cyan-500/15 shadow-[0_0_15px_rgba(6,182,212,0.15)]' : 'border-white/10 bg-black/30 opacity-70 hover:opacity-100'">
                             <input type="radio" x-model="regRole" value="creator" class="hidden">
-                            <span class="text-sm font-bold">Creador</span>
-                            <span class="text-[10px] text-gray-400">Recibir aportes</span>
+                            <span class="text-xs sm:text-sm font-extrabold text-white">Creador</span>
+                            <span class="text-[10px] text-cyan-300 mt-0.5">Recibir aportes</span>
                         </label>
                     </div>
+
                     <div x-show="authMode === 'register' && regRole === 'creator'" x-transition>
-                        <div class="flex items-center bg-black/30 border border-white/10 rounded-xl px-4 py-3 focus-within:border-blue-500 transition-colors">
-                            <span class="text-gray-500 text-sm select-none">membry.app/</span>
-                            <input type="text" x-model="username" placeholder="tu_usuario" class="w-full bg-transparent text-sm focus:outline-none text-white placeholder-gray-600">
+                        <div class="flex items-center bg-black/40 border border-white/10 rounded-2xl px-4 py-3.5 focus-within:border-cyan-400 transition-colors">
+                            <span class="text-gray-500 text-sm font-semibold select-none">membry.app/</span>
+                            <input type="text" 
+                                   x-model="username" 
+                                   autocapitalize="none" 
+                                   autocorrect="off" 
+                                   spellcheck="false"
+                                   placeholder="tu_usuario" 
+                                   class="w-full bg-transparent text-sm font-bold focus:outline-none text-white placeholder-gray-600">
                         </div>
                     </div>
+
                     <div x-show="authMode === 'register'" x-transition>
-                        <input type="text" x-model="displayName" placeholder="Nombre visible (ej. SneakBtw)" class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors placeholder-gray-500">
+                        <input type="text" 
+                               x-model="displayName" 
+                               autocomplete="name"
+                               placeholder="Nombre visible o artístico (ej. SneakBtw)" 
+                               class="w-full bg-black/40 border border-white/10 rounded-2xl px-4 py-3.5 text-sm focus:outline-none focus:border-blue-500 transition-colors placeholder-gray-500">
                     </div>
-                    <input type="email" x-model="email" placeholder="Correo electrónico" class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors placeholder-gray-500">
-                    <input type="password" x-model="password" placeholder="Contraseña" class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors placeholder-gray-500">
-                    <div x-show="authMode === 'register'" class="flex items-start gap-2 pt-1">
-                        <input type="checkbox" x-model="legalConsent" id="legal" class="mt-0.5 w-4 h-4 accent-blue-500 rounded border-gray-600 bg-gray-700 shrink-0">
-                        <label for="legal" class="text-[11px] text-gray-400 leading-tight">
-                            Acepto los <button type="button" @click="openLegalModal()" class="text-cyan-400 underline font-semibold hover:text-cyan-300">Términos y Condiciones</button> y el resguardo de datos según la <strong class="text-white" x-text="legalData.config.regulatoryLaws.dataProtection"></strong>.
-                        </label>
+
+                    <div>
+                        <input type="email" 
+                               x-model="email" 
+                               inputmode="email"
+                               autocomplete="email"
+                               autocapitalize="none"
+                               placeholder="Correo electrónico" 
+                               class="w-full bg-black/40 border border-white/10 rounded-2xl px-4 py-3.5 text-sm focus:outline-none focus:border-blue-500 transition-colors placeholder-gray-500">
                     </div>
-                    <div class="h-14 pt-2">
-                        <button x-show="isFormValid()" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 translate-y-6 scale-90" x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 scale-100" x-transition:leave-end="opacity-0 translate-y-2 scale-95" @click="authMode === 'login' ? login() : register()" class="w-full bg-white text-black font-bold py-3.5 rounded-xl active:scale-95 transition-all flex justify-center items-center gap-2 text-base shadow-[0_0_20px_rgba(255,255,255,0.4)]">
-                            <span x-text="authMode === 'login' ? 'Acceder' : 'Crear mi cuenta'"></span>
-                            <svg x-show="isLoading" class="animate-spin h-5 w-5 text-black" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+
+                    <div class="relative flex items-center">
+                        <input :type="showPass ? 'text' : 'password'" 
+                               x-model="password" 
+                               autocomplete="current-password"
+                               @keyup.enter="if(isFormValid()) { authMode === 'login' ? login() : register() }"
+                               placeholder="Contraseña" 
+                               class="w-full bg-black/40 border border-white/10 rounded-2xl pl-4 pr-12 py-3.5 text-sm focus:outline-none focus:border-blue-500 transition-colors placeholder-gray-500">
+                        <button type="button" 
+                                @click="showPass = !showPass" 
+                                tabindex="-1"
+                                class="absolute right-3.5 text-gray-500 hover:text-gray-300 p-1 transition-colors">
+                            <svg x-show="!showPass" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                            <svg x-show="showPass" style="display: none;" class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path></svg>
+                        </button>
+                    </div>
+
+                    <!-- ENLACE DE RECUPERACIÓN (DISPONIBLE PARA TODOS LOS DISPOSITIVOS EN MODO LOGIN) -->
+                    <div x-show="authMode === 'login'" class="text-right pt-1">
+                        <button type="button" @click="recoverPassword()" class="text-xs text-cyan-400 hover:underline">
+                            ¿Olvidaste tu contraseña?
+                        </button>
+                    </div>
+
+                    <div x-show="authMode === 'register'" class="pt-1">
+                        <div @click.prevent="handleTermsClick()" 
+                             class="flex items-start gap-3 p-3.5 rounded-2xl border transition-all cursor-pointer select-none"
+                             :class="legalConsent ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-black/30 border-white/10 hover:border-cyan-400/40'">
+                            
+                            <div class="mt-0.5 w-5 h-5 rounded-md flex items-center justify-center border transition-all shrink-0"
+                                 :class="legalConsent ? 'bg-emerald-500 border-emerald-400 text-black shadow-[0_0_10px_rgba(16,185,129,0.4)]' : 'bg-gray-800 border-gray-600'">
+                                <svg x-show="legalConsent" class="w-3.5 h-3.5 stroke-[3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </div>
+
+                            <div class="text-[11px] text-gray-300 leading-tight">
+                                Declaro bajo juramento ser <strong class="text-white">mayor de 18 años</strong> y haber leído hasta el final los 
+                                <span class="text-cyan-400 underline font-semibold">Términos y Condiciones de Indemnidad</span> (<span x-text="legalData.config.regulatoryLaws.dataProtection"></span>).
+                                <div x-show="!legalConsent" class="text-[10px] text-amber-400/90 font-semibold mt-1">
+                                    ⚠️ Tocá aquí para abrir el contrato y deslizar hasta el final.
+                                </div>
+                                <div x-show="legalConsent" class="text-[10px] text-emerald-400 font-semibold mt-1">
+                                    ✓ Lectura completa verificada y registrada en auditoría.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-2">
+                        <button type="button"
+                                :disabled="!isFormValid() || isLoading"
+                                @click="authMode === 'login' ? login() : register()" 
+                                :class="isFormValid() 
+                                    ? 'bg-white text-slate-950 shadow-[0_0_25px_rgba(255,255,255,0.4)] hover:bg-cyan-50 active:scale-95 cursor-pointer' 
+                                    : 'bg-white/5 text-gray-500 border border-white/10 cursor-not-allowed'"
+                                class="w-full font-extrabold py-4 rounded-2xl transition-all duration-300 flex justify-center items-center gap-2 text-sm sm:text-base">
+                            <span x-text="authMode === 'login' ? 'Acceder' : (legalConsent ? 'Crear mi cuenta' : 'Completá tus datos y aceptá los Términos')"></span>
+                            <svg x-show="isLoading" class="animate-spin h-5 w-5 text-current" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
                         </button>
                     </div>
                 </div>
+            </div>
+
+            <div class="relative z-10 text-center pb-1 mt-auto">
+                <p class="text-[11px] text-gray-500">
+                    Protegido por encriptación de credenciales y trazabilidad IP
+                </p>
             </div>
         </div>
 
         <!-- ========== VISTA CREADOR / DASHBOARD ========== -->
         <div x-show="currentView === 'creator' || currentView === 'dashboard'" style="display: none;" class="pb-16">
             <div x-show="currentView === 'creator'" class="max-w-5xl mx-auto px-4 pt-4">
+                
+                <!-- BANNER DE DEMOSTRACIÓN RESPONSIVE -->
+                <div x-show="!isLoggedIn" class="w-full mb-6 bg-gradient-to-r from-blue-600/20 via-cyan-500/20 to-blue-600/20 border border-cyan-500/30 rounded-3xl p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl backdrop-blur-md">
+                    <div class="flex items-center gap-3.5 text-center sm:text-left w-full sm:w-auto">
+                        <div class="w-10 h-10 rounded-2xl bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center text-cyan-400 font-extrabold text-xs shrink-0 mx-auto sm:mx-0 shadow-sm">
+                            DEMO
+                        </div>
+                        <div class="flex-1">
+                            <div class="text-xs sm:text-sm font-bold text-white">Estás viendo una página de ejemplo en vivo</div>
+                            <div class="text-[11px] sm:text-xs text-gray-300 mt-0.5">Así es exactamente como tus seguidores van a ver tu perfil y van a poder apoyarte.</div>
+                        </div>
+                    </div>
+                    <button @click="goToAuth('register')" class="w-full sm:w-auto shrink-0 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-[0_0_15px_rgba(37,99,235,0.4)] transition-all active:scale-95 text-center">
+                        Crear mi propia página gratis
+                    </button>
+                </div>
+
                 <div x-show="!isLoggedIn" class="mb-3">
                     <button @click="navigate('landing')" class="text-xs font-semibold text-gray-400 hover:text-cyan-400 flex items-center gap-1">
                         <span>← Volver a la portada principal de Membry</span>
@@ -382,14 +624,13 @@
                         <div class="flex gap-2 mt-2 md:mt-0">
                             <div class="bg-white/5 border border-white/10 px-4 py-2 rounded-xl text-center">
                                 <div class="text-lg font-extrabold text-white" x-text="creator.supporters_count"></div>
-                                <div class="text-[10px] text-gray-400 uppercase tracking-wider">Aportes</div>
+                                <div class="text-[10px] text-gray-400 uppercase tracking-wider" x-text="creator.unit_name_plural"></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
-                    <!-- COLUMNA IZQUIERDA: METAS + MEMBRESÍAS -->
                     <div class="md:col-span-5 space-y-6">
                         <div class="glass-card rounded-2xl p-5">
                             <div class="flex justify-between items-center mb-2">
@@ -406,11 +647,9 @@
                             </div>
                         </div>
 
-                        <!-- MEMBRESÍAS CON INPUT GLOBAL DE EMAIL -->
                         <div>
                             <h3 class="font-bold text-lg mb-3 ml-1">Membresías Mensuales</h3>
 
-                            <!-- 👇 INPUT NUEVO: email global para suscripción -->
                             <input type="email" 
                                    x-model="supporterEmail" 
                                    placeholder="Tu email (para Mercado Pago)" 
@@ -439,16 +678,15 @@
                         </div>
                     </div>
 
-                    <!-- COLUMNA DERECHA: APORTE ÚNICO + MURO -->
                     <div class="md:col-span-7 space-y-6">
                         <div class="glass-card rounded-2xl p-6 border-blue-500/20">
                             <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
-                                <span>Invitale un aporte a</span>
+                                <span x-text="`Invitale ${creator.unit_name_plural} a`"></span>
                                 <span class="text-cyan-400" x-text="creator.display_name"></span>
                             </h3>
                             <div class="flex items-center justify-between bg-black/40 border border-white/10 rounded-xl p-3 mb-4">
-                                <div class="flex items-center gap-2">
-                                    <span class="text-2xl">⚡</span>
+                                <div class="flex items-center gap-2.5 pl-1">
+                                    <span class="text-3xl transition-transform duration-300 transform hover:scale-110" x-text="creator.unit_icon"></span>
                                     <span class="text-gray-400 font-bold">x</span>
                                 </div>
                                 <div class="flex gap-2">
@@ -463,7 +701,7 @@
                                 <textarea x-model="supporterMessage" placeholder="Escribí un mensaje de apoyo público..." rows="3" class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500"></textarea>
                             </div>
                             <button @click="processPayment('Aporte Único', coffeeCount * coffeePrice, 'one_time')" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl shadow-[0_0_20px_rgba(37,99,235,0.3)] active:scale-95 transition-all flex justify-between items-center px-6">
-                                <span x-text="`Invitar ${coffeeCount} ${coffeeCount === 1 ? 'aporte' : 'aportes'}`"></span>
+                                <span x-text="`Invitar ${coffeeCount} ${coffeeCount === 1 ? creator.unit_name_singular : creator.unit_name_plural}`"></span>
                                 <span class="bg-black/30 px-3 py-1 rounded-lg text-cyan-300 font-extrabold" x-text="`$${(coffeeCount * coffeePrice).toLocaleString()}`"></span>
                             </button>
                         </div>
@@ -483,7 +721,7 @@
                                                 </div>
                                                 <div>
                                                     <div class="font-bold text-sm text-white" x-text="review.name"></div>
-                                                    <div class="text-xs text-cyan-400 font-semibold" x-text="`⚡ Invitó ${review.coffees} ${review.coffees === 1 ? 'aporte' : 'aportes'}`"></div>
+                                                    <div class="text-xs text-cyan-400 font-semibold" x-text="`${creator.unit_icon} Invitó ${review.coffees} ${review.coffees === 1 ? creator.unit_name_singular : creator.unit_name_plural}`"></div>
                                                 </div>
                                             </div>
                                             <span class="text-[11px] text-gray-500" x-text="review.date"></span>
@@ -515,12 +753,37 @@
                     <div class="text-4xl font-extrabold text-cyan-400 mb-6" x-text="`$${creator.balance.toLocaleString('es-AR', {minimumFractionDigits: 2})}`"></div>
                     <button @click="requestWithdrawal()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-xl active:scale-95 transition-all text-sm">Retirar Fondos a Mercado Pago / CBU</button>
                 </div>
+
+                <div class="glass-card rounded-3xl p-6 mb-6 border border-blue-500/20">
+                    <div class="flex justify-between items-center mb-3">
+                        <div>
+                            <h3 class="font-bold text-base text-white">Personalizá tu Unidad de Apoyo</h3>
+                            <p class="text-xs text-gray-400">Elegí el ícono con el que tu comunidad te va a invitar aportes en tu perfil público.</p>
+                        </div>
+                        <span class="text-2xl bg-white/5 border border-white/10 w-11 h-11 rounded-2xl flex items-center justify-center" x-text="creator.unit_icon"></span>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 mt-4">
+                        <template x-for="preset in unitPresets" :key="preset.id">
+                            <button @click="selectUnitPreset(preset)"
+                                    :class="creator.unit_icon === preset.icon ? 'border-cyan-400 bg-blue-600/20 text-white shadow-[0_0_15px_rgba(6,182,212,0.25)]' : 'border-white/10 bg-black/30 text-gray-400 hover:text-white hover:border-white/20'"
+                                    class="p-3 rounded-2xl border text-left transition-all flex items-center gap-3 active:scale-95">
+                                <span class="text-2xl" x-text="preset.icon"></span>
+                                <div>
+                                    <div class="text-xs font-bold text-white" x-text="preset.label"></div>
+                                    <div class="text-[10px] text-cyan-400 capitalize" x-text="`1 ${preset.singular}`"></div>
+                                </div>
+                            </button>
+                        </template>
+                    </div>
+                </div>
+
                 <h3 class="font-bold text-lg mb-4 ml-1">Últimos Aportes Recibidos</h3>
                 <div class="space-y-3">
                     <template x-for="tx in transactions" :key="tx.id">
                         <div class="glass-card rounded-xl p-4 flex justify-between items-center">
                             <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-full bg-blue-600/20 flex items-center justify-center text-blue-400 font-bold">⚡</div>
+                                <div class="w-10 h-10 rounded-full bg-blue-600/20 flex items-center justify-center text-blue-400 font-bold" x-text="creator.unit_icon"></div>
                                 <div>
                                     <div class="font-bold text-sm" x-text="tx.supporter_name"></div>
                                     <div class="text-xs text-gray-400" x-text="tx.type === 'subscription' ? 'Suscripción Mensual' : 'Aporte Único'"></div>
@@ -561,7 +824,7 @@
     </main>
 
     <!-- FOOTER LEGAL -->
-    <footer x-show="currentView !== 'auth'" class="border-t border-white/10 bg-[#070a12] py-12 px-4 pb-28 md:pb-12">
+    <footer x-show="currentView !== 'auth'" class="border-t border-white/10 bg-[#070a12] py-12 px-4">
         <div class="max-w-6xl mx-auto space-y-8">
             <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
                 <div class="md:col-span-6 space-y-3">
@@ -572,7 +835,7 @@
                         <span class="font-extrabold text-lg" x-text="legalData.config.platformName"></span>
                         <span class="text-[10px] font-mono bg-white/5 border border-white/10 px-2 py-0.5 rounded text-cyan-400" x-text="legalData.config.version"></span>
                     </div>
-                    <p class="text-xs text-gray-400 leading-relaxed max-w-xl" x-text="legalData.sections[1]?.body"></p>
+                    <p class="text-xs text-gray-400 leading-relaxed max-w-xl" x-text="legalData.sections[4]?.body || legalData.sections[1]?.body"></p>
                 </div>
                 <div class="md:col-span-3 space-y-2">
                     <h4 class="text-xs font-bold uppercase tracking-wider text-cyan-400">Marco Normativo (AR)</h4>
@@ -599,21 +862,48 @@
         </div>
     </footer>
 
-    <!-- NAV INFERIOR -->
-    <nav x-show="isLoggedIn && currentUser?.role === 'creator'" style="display: none;" class="fixed bottom-0 w-full bg-[#0b0f19]/95 backdrop-blur-md border-t border-white/10 z-40 pb-safe">
-        <div class="max-w-md mx-auto flex justify-around items-center p-3">
-            <button @click="navigate('landing')" :class="currentView === 'landing' ? 'text-blue-500' : 'text-gray-400 hover:text-white'" class="flex flex-col items-center gap-1">
+    <!-- BARRA DE NAVEGACIÓN INFERIOR (SOLO MÓVILES - SM:HIDDEN) -->
+    <nav x-show="currentView !== 'auth'" class="sm:hidden fixed bottom-0 left-0 right-0 w-full bg-[#0b0f19]/95 backdrop-blur-xl border-t border-white/10 z-40 pb-safe shadow-[0_-10px_25px_rgba(0,0,0,0.5)]">
+        <div class="max-w-md mx-auto flex justify-around items-center px-2 py-2.5">
+            
+            <button @click="navigate('landing')" :class="currentView === 'landing' ? 'text-cyan-400 bg-blue-600/15 border-blue-500/30' : 'text-gray-400 hover:text-white border-transparent'" class="flex flex-col items-center justify-center gap-1 w-16 py-1.5 rounded-xl border transition-all">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                 <span class="text-[10px] font-bold">Inicio</span>
             </button>
-            <button @click="navigate('creator')" :class="currentView === 'creator' ? 'text-blue-500' : 'text-gray-400 hover:text-white'" class="flex flex-col items-center gap-1">
+
+            <button @click="navigate('creator')" :class="currentView === 'creator' ? 'text-cyan-400 bg-blue-600/15 border-blue-500/30' : 'text-gray-400 hover:text-white border-transparent'" class="flex flex-col items-center justify-center gap-1 w-16 py-1.5 rounded-xl border transition-all">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                 <span class="text-[10px] font-bold">Creador</span>
             </button>
-            <button @click="navigate('dashboard')" :class="currentView === 'dashboard' ? 'text-blue-500' : 'text-gray-400 hover:text-white'" class="flex flex-col items-center gap-1">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-                <span class="text-[10px] font-bold">Panel</span>
-            </button>
+
+            <template x-if="!isLoggedIn">
+                <button @click="goToAuth('register')" class="flex flex-col items-center justify-center gap-1 w-20 py-1.5 rounded-xl bg-blue-600 text-white shadow-[0_0_15px_rgba(37,99,235,0.4)] active:scale-95 transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+                    <span class="text-[10px] font-extrabold">Crear cuenta</span>
+                </button>
+            </template>
+
+            <template x-if="isLoggedIn">
+                <button @click="navigate('dashboard')" :class="currentView === 'dashboard' ? 'text-cyan-400 bg-blue-600/15 border-blue-500/30' : 'text-gray-400 hover:text-white border-transparent'" class="flex flex-col items-center justify-center gap-1 w-16 py-1.5 rounded-xl border transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    <span class="text-[10px] font-bold">Panel</span>
+                </button>
+            </template>
+
+            <template x-if="!isLoggedIn">
+                <button @click="goToAuth('login')" class="flex flex-col items-center justify-center gap-1 w-16 py-1.5 rounded-xl text-gray-400 hover:text-white border border-transparent transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
+                    <span class="text-[10px] font-bold">Ingresar</span>
+                </button>
+            </template>
+
+            <template x-if="isLoggedIn">
+                <button @click="logout()" class="flex flex-col items-center justify-center gap-1 w-16 py-1.5 rounded-xl text-red-400 hover:bg-red-500/10 border border-transparent transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                    <span class="text-[10px] font-bold">Salir</span>
+                </button>
+            </template>
+
         </div>
     </nav>
 
@@ -624,24 +914,101 @@
                 legalOwner: 'Membry Platform',
                 jurisdiction: 'Ciudad Autónoma de Buenos Aires, República Argentina',
                 contactEmail: 'membry.ok@gmail.com',
-                version: 'v1.0-AR-2026',
-                lastUpdated: 'Octubre 2026',
+                version: 'v2.0-BLINDAJE-AR-2026',
+                lastUpdated: '26 de octubre de 2026',
                 platformFeePercent: 5,
+                minimumAge: 18,
+                maxLiabilityARS: 50000,
                 paymentProcessor: 'Mercado Pago (MercadoLibre S.R.L.)',
                 regulatoryLaws: Object.freeze({
                     dataProtection: 'Ley N° 25.326 de Protección de los Datos Personales (AAIP)',
                     consumerDefense: 'Ley N° 24.240 de Defensa del Consumidor',
-                    civilCode: 'Código Civil y Comercial de la Nación (Arts. 1104 a 1116)',
-                    antiMoneyLaundering: 'Ley N° 25.246 de Prevención de Lavado de Activos (UIF)'
+                    civilCode: 'Código Civil y Comercial de la Nación (Arts. 25, 1104 a 1116 y 1743)',
+                    intellectualProperty: 'Ley N° 11.723 de Régimen Legal de la Propiedad Intelectual',
+                    antiMoneyLaundering: 'Ley N° 25.246 de Prevención de Lavado de Activos (UIF)',
+                    penalCode: 'Código Penal de la Nación Argentina (Delitos Informáticos y Art. 128)'
                 }),
                 aaipMandatoryNotice: 'EL TITULAR DE LOS DATOS PERSONALES TIENE LA FACULTAD DE EJERCER EL DERECHO DE ACCESO A LOS MISMOS EN FORMA GRATUITA A INTERVALOS NO INFERIORES A SEIS MESES, SALVO QUE SE ACREDITE UN INTERÉS LEGÍTIMO AL EFECTO CONFORME LO ESTABLECIDO EN EL ARTÍCULO 14, INCISO 3 DE LA LEY Nº 25.326. LA AGENCIA DE ACCESO A LA INFORMACIÓN PÚBLICA, EN SU CARÁCTER DE ÓRGANO DE CONTROL DE LA LEY Nº 25.326, TIENE LA ATRIBUCIÓN DE ATENDER LAS DENUNCIAS Y RECLAMOS QUE INTERPONGAN QUIENES RESULTEN AFECTADOS EN SUS DERECHOS POR INCUMPLIMIENTO DE LAS NORMAS VIGENTES EN MATERIA DE PROTECCIÓN DE DATOS PERSONALES.'
             }),
             sections: Object.freeze([
-                { id: 'objeto', title: '1. Naturaleza del Servicio y Alcance de Membry', body: 'Membry es una plataforma tecnológica de software (SaaS) que brinda herramientas de diseño de perfil digital e integración informática para que creadores independientes ("Creadores") reciban apoyo económico voluntario y suscripciones de su comunidad ("Seguidores"). Membry NO es una entidad financiera (Ley N° 21.526), no capta ahorro público ni administra fondos por cuenta propia; la totalidad de los pagos se procesa mediante Mercado Pago (MercadoLibre S.R.L.).' },
-                { id: 'exclusion', title: '2. Exclusión Total de Responsabilidad y Uso Compatible', body: 'Membry actúa exclusivamente como intermediario tecnológico neutro. Queda totalmente desvinculado y exento de responsabilidad civil, comercial, penal, laboral o tributaria por las acciones, promesas, contenidos, sorteos, entregas o servicios que los Creadores ofrezcan a sus Seguidores. Cualquier uso que se aparte del apoyo legítimo a la creación de contenido incluyendo fraude, lavado de activos (Ley N° 25.246), esquemas piramidales, apuestas, contenido ilegal o infracción a derechos de terceros resultará en la suspensión inmediata y definitiva de la cuenta.' },
-                { id: 'comisiones', title: '3. Modelo de Negocio, Comisiones e Impuestos', body: 'El registro y mantenimiento de la página en Membry es gratuito. Por cada transacción procesada exitosamente, se aplica una comisión de servicio tecnológico del 5%, adicional a los cargos propios de Mercado Pago. Cada Creador actúa como sujeto independiente y es el único responsable de emitir la facturación correspondiente y cumplir con sus obligaciones impositivas ante ARCA (ex AFIP).' },
-                { id: 'datos', title: '4. Tratamiento de Datos Personales y Registro de Auditoría', body: 'En cumplimiento de la Ley N° 25.326, el usuario presta su consentimiento expreso e informado para que Membry recolecte y almacene sus datos identificatorios junto con un registro inmutable de auditoría informática (dirección IP, navegador, fecha, hora y tipo de evento) con la finalidad exclusiva de garantizar la seguridad operativa, prevenir fraudes y acreditar trazabilidad legal.' },
-                { id: 'jurisdiccion', title: '5. Ley Aplicable y Jurisdicción', body: 'Estos Términos y Condiciones se rigen íntegramente por las leyes de la República Argentina (Código Civil y Comercial de la Nación y Ley N° 24.240). Ante cualquier controversia derivada del uso de la plataforma, las partes se someten a la jurisdicción de los Tribunales Ordinarios de la Ciudad Autónoma de Buenos Aires.' }
+                {
+                    id: 'elegibilidad',
+                    title: '1. Elegibilidad y Mayoría de Edad Obligatoria (+18)',
+                    summary: 'En pocas palabras: Debe ser mayor de edad (18 años o más) según la ley argentina para utilizar Membry. Si es menor de edad, tiene estrictamente prohibido el acceso.',
+                    body: 'Conforme al Artículo 25 del Código Civil y Comercial de la Nación, usted declara y garantiza bajo juramento tener al menos dieciocho (18) años de edad y plena capacidad civil para contratar. El uso de la plataforma está terminantemente prohibido para menores de edad. Al acceder, registrarse o realizar aportes en Membry, usted manifiesta que comprende y acepta este acuerdo contractual vinculante.'
+                },
+                {
+                    id: 'concesion',
+                    title: '2. Concesión de Uso Limitada y Derecho de Admisión y Baja',
+                    summary: 'En pocas palabras: Le concedemos un permiso personal para usar Membry, pero podemos suspender o eliminar su cuenta, bloquear su IP o retirar contenido en cualquier momento si detectamos riesgos o incumplimientos.',
+                    body: 'Le concedemos un derecho no exclusivo, intransferible y revocable para acceder y utilizar Membry. Esta concesión puede ser rescindida por nuestra parte en cualquier momento, con o sin previo aviso, si consideramos a nuestra entera discreción que se vulneran estas Condiciones. Usted reconoce que Membry no será responsable ante usted ni ante terceros por la terminación de su acceso.'
+                },
+                {
+                    id: 'kyc',
+                    title: '3. Verificación de Identidad del Usuario (KYC) y Prevención de Fraude',
+                    summary: 'En pocas palabras: Podemos exigirle en cualquier momento una foto de su DNI y una selfie sosteniendo el documento junto a su rostro para verificar su identidad y mayoría de edad.',
+                    body: 'A nuestra entera discreción y en cumplimiento de las normas de seguridad y prevención de fraude (Ley N° 25.246 UIF), podemos exigir a cualquier Creador o Seguidor que verifique su identidad mediante la presentación de una copia clara de su DNI vigente y una fotografía actual (selfie) sosteniendo dicho documento junto a su rostro. La negativa o el suministro de datos falsos dará lugar al bloqueo permanente de la cuenta.'
+                },
+                {
+                    id: 'contribuciones',
+                    title: '4. Contribuciones de Usuario, Licencias y Contenido Prohibido',
+                    summary: 'En pocas palabras: Usted es dueño de lo que publica y es el único responsable legal de su contenido. Nos otorga permiso para mostrarlo en la plataforma y garantiza que no infringe derechos de terceros ni leyes vigentes.',
+                    body: 'Usted conserva la titularidad de los textos, imágenes, enlaces, audios o videos que publique, siendo el único y exclusivo responsable civil, penal y tributario de su publicación. Usted garantiza que jamás publicará material que involucre a menores de edad (Art. 128 del Código Penal Argentino), violencia, crueldad animal, incitación al odio, estafas, lavado de dinero, apuestas ilegales ni actividades reñidas con las políticas de Mercado Pago.'
+                },
+                {
+                    id: 'intermediacion',
+                    title: '5. Contenido de Terceros y Neutralidad Tecnológica',
+                    summary: 'En pocas palabras: No somos dueños ni editores de lo que publican los Creadores o Seguidores, ni controlamos enlaces externos. Si interactúa o consume contenido de un Creador, lo hace bajo su propia responsabilidad.',
+                    body: 'Membry actúa exclusivamente como un proveedor neutro de infraestructura informática (SaaS), amparado por la doctrina jurisprudencial de la Corte Suprema de Justicia de la Nación sobre responsabilidad de intermediarios en Internet (Fallo "Rodríguez, María Belén"). No garantizamos la veracidad, calidad o cumplimiento de las recompensas prometidas por los Creadores.'
+                },
+                {
+                    id: 'conducta',
+                    title: '6. Conducta del Usuario, Seguridad Informática y Registro de Actividad',
+                    summary: 'En pocas palabras: No utilice Membry para infringir la ley, acosar usuarios ni atacar nuestros servidores. Usted nos autoriza expresamente a registrar su actividad, IP y eventos por seguridad.',
+                    body: 'Usted nos autoriza expresamente a supervisar y registrar en nuestro motor inmutable de auditoría informática (Audit Log) sus actividades dentro de la plataforma, incluyendo dirección IP, dispositivo, navegador, fechas, textos de reseñas e intentos de pago, con fines de seguridad operativa y prueba judicial.'
+                },
+                {
+                    id: 'pagos',
+                    title: '7. Aportes, Membresías, Split de Pagos y Política Anti-Contracargos',
+                    summary: 'En pocas palabras: Los pagos se procesan por Mercado Pago con una comisión del 5% para la plataforma. Los aportes enviados a los Creadores son definitivos, no son reembolsables y usted se compromete a no realizar desconocimientos falsos de cargos.',
+                    body: 'Membry no es una entidad financiera (Ley N° 21.526) ni retiene fondos de terceros; opera mediante el sistema Marketplace Split de Mercado Pago, reteniendo únicamente un 5% por servicio tecnológico. Cada Creador es sujeto tributario independiente responsable de su facturación ante ARCA (ex AFIP). Los aportes únicos constituyen liberalidades voluntarias y NO SON REEMBOLSABLES.'
+                },
+                {
+                    id: 'propiedad_intelectual',
+                    title: '8. Propiedad Intelectual, Derechos de Autor y Política de Reincidentes',
+                    summary: 'En pocas palabras: El software, diseño y marca Membry nos pertenecen. Respetamos los derechos de autor (Ley N° 11.723) y daremos de baja a quienes suban material robado.',
+                    body: 'El código fuente, diseño visual, logotipos y bases de datos de Membry son propiedad exclusiva de la plataforma. Respecto al contenido subido por usuarios, aplicamos un protocolo estricto de notificación y retirada ("Notice and Takedown") conforme a la Ley N° 11.723. Se cancelará la cuenta de cualquier usuario que acumule tres (3) reclamaciones legítimas en seis meses.'
+                },
+                {
+                    id: 'grabaciones',
+                    title: '9. Prohibición de Reventa y Explotación Comercial por Seguidores',
+                    summary: 'En pocas palabras: El contenido o beneficios a los que acceda apoyando a un Creador son solo para su uso personal. Está prohibido revenderlos, grabarlos o redistribuirlos comercialmente.',
+                    body: 'El acceso a muros, enlaces exclusivos, transmisiones o beneficios otorgados por un Creador a sus Seguidores o suscriptores de membresías es estrictamente para uso personal y no comercial del Seguidor. Queda terminantemente prohibida la grabación no autorizada, copia, distribución o reventa del material provisto por los Creadores.'
+                },
+                {
+                    id: 'indemnidad',
+                    title: '10. Indemnidad Total y Exención Frente a Disputas entre Usuarios',
+                    summary: 'En pocas palabras: Si alguien demanda a Membry por culpa de su contenido o por una infracción suya, usted deberá hacerse cargo de todos los gastos legales y honorarios de abogados. Si tiene una disputa con un Creador, el reclamo es solo contra ese Creador.',
+                    body: 'Usted se obliga a mantener indemne, defender e indemnizar a Membry, sus titulares, desarrolladores y representantes frente a cualquier reclamo, demanda, multa, sanción o gasto (incluyendo costas judiciales y honorarios razonables de abogados) promovido por terceros a raíz de sus Contribuciones de usuario o su incumplimiento de estas Condiciones.'
+                },
+                {
+                    id: 'limitacion',
+                    title: '11. Exclusión de Garantías y Límite Máximo de Responsabilidad',
+                    summary: 'En pocas palabras: Ofrecemos la plataforma "tal cual" sin garantizar que nunca haya interrupciones técnicas. Nuestra responsabilidad máxima ante cualquier eventualidad está limitada al tope legal permitido.',
+                    body: 'En la máxima medida permitida por el Artículo 1743 del Código Civil y Comercial de la Nación, Membry no garantiza que el servicio funcione de manera ininterrumpida. La responsabilidad total máxima acumulada de Membry por cualquier concepto vinculado al servicio no excederá las comisiones netas percibidas respecto de su cuenta en los últimos tres (3) meses, o la suma de $50.000 ARS, lo que resulte menor.'
+                },
+                {
+                    id: 'jurisdiccion',
+                    title: '12. Modificaciones, Divisibilidad, Ley Aplicable y Jurisdicción',
+                    summary: 'En pocas palabras: Podemos actualizar estas normas publicándolas en la web. Toda nuestra actividad se rige por las leyes de la República Argentina y los tribunales de la Ciudad Autónoma de Buenos Aires.',
+                    body: 'Nos reservamos el derecho de modificar estas Condiciones publicando la nueva versión en el sitio web. Este acuerdo se rige íntegramente por las leyes de la República Argentina. Para cualquier controversia judicial, las partes se someten a la competencia exclusiva de los Tribunales Ordinarios de la Ciudad Autónoma de Buenos Aires.'
+                },
+                {
+                    id: 'privacidad_datos',
+                    title: '13. Privacidad, No Comercialización de Datos y Encriptación de Credenciales',
+                    summary: 'En pocas palabras: Tus datos personales son estrictamente confidenciales. No vendemos ni alquilamos bases de datos a terceros, y todas las contraseñas se almacenan mediante hashing seguro.',
+                    body: 'En estricto cumplimiento de la Ley N° 25.326, Membry declara formalmente que no comercializa, cede, alquila ni transfiere bases de datos de usuarios o creadores a entidades comerciales terceras. Los datos recopilados se utilizan exclusivamente para la operatividad técnica de la plataforma y el procesamiento de pagos. Asimismo, la plataforma garantiza que las contraseñas de acceso de los usuarios nunca se almacenan en texto plano, sino mediante funciones criptográficas de hashing de alta complejidad (bcrypt), garantizando que ni siquiera los administradores puedan leerlas.'
+                }
             ])
         });
 
@@ -651,6 +1018,9 @@
                 showLegalModal: false,
                 legalData: DEFAULT_LEGAL_STATE,
                 
+                hasScrolledToBottom: false,
+                scrollProgress: 0,
+
                 isLoggedIn: false,
                 isLoading: false,
                 currentUser: null,
@@ -666,11 +1036,11 @@
                 toastMessage: '',
 
                 auditLogs: [
-                    { id: 1, action: 'SESSION_INIT', summary: 'Aplicación web inicializada con blindaje legal v1.0-AR', ip_address: '127.0.0.1', user_email: 'sistema@membry.app', time: 'Ahora' }
+                    { id: 1, action: 'SESSION_INIT', summary: 'Aplicación web inicializada con blindaje legal v2.0-BLINDAJE-AR-2026', ip_address: '127.0.0.1', user_email: 'sistema@membry.app', time: 'Ahora' }
                 ],
 
                 creatorCategories: [
-                    { tag: 'Gaming & Streams', title: 'Streamers y Gamers', desc: 'Financiá mejoras para tu PC, periféricos o sorteos con el apoyo en vivo de tus viewers.', img: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600&q=80' },
+                    { tag: 'Gaming & Streams', title: 'Streamers y Gamers', desc: 'Financiá mejoras para tu PC, periféricos o sorteos con el apoyo en vivo de tu comunidad.', img: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600&q=80' },
                     { tag: 'Software & Tech', title: 'Devs y Educadores', desc: 'Monetizá tus tutoriales, repositorios open-source, plantillas y asesorías técnicas.', img: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&q=80' },
                     { tag: 'Música & Audio', title: 'Músicos y Podcasters', desc: 'Recibí aportes por tus sets en vivo, episodios semanales o acceso anticipado a tus temas.', img: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&q=80' },
                     { tag: 'Arte & Lifestyle', title: 'Artistas y Creadores', desc: 'Ofrecé contenido exclusivo, recetas, rutinas o ilustraciones a tu comunidad más fiel.', img: 'https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=600&q=80' }
@@ -701,15 +1071,28 @@
                     supporters_count: 142,
                     goal_title: 'Actualizar placa de video y luces del estudio',
                     goal_current: 185000,
-                    goal_target: 250000
+                    goal_target: 250000,
+                    unit_icon: '⚡',
+                    unit_name_singular: 'aporte',
+                    unit_name_plural: 'aportes'
                 },
+
+                unitPresets: [
+                    { id: 'tech', icon: '⚡', label: 'Tech / Stream', singular: 'energía', plural: 'energías' },
+                    { id: 'music', icon: '🎵', label: 'Música / Audio', singular: 'púa', plural: 'púas' },
+                    { id: 'art', icon: '🎨', label: 'Arte / Diseño', singular: 'pincelada', plural: 'pinceladas' },
+                    { id: 'food', icon: '🍕', label: 'Cocina / Chef', singular: 'porción', plural: 'porciones' },
+                    { id: 'video', icon: '🎬', label: 'Video / Cine', singular: 'toma', plural: 'tomas' },
+                    { id: 'live', icon: '🔥', label: 'Vivo / Aguante', singular: 'fuego', plural: 'fuegos' }
+                ],
+
                 tiers: [],
                 transactions: [],
                 coffeeCount: 1,
                 coffeePrice: 1500,
                 supporterName: '',
                 supporterMessage: '',
-                supporterEmail: '',  // 👈 NUEVA VARIABLE
+                supporterEmail: '',
 
                 publicReviews: [
                     { id: 1, name: 'Martín G.', coffees: 3, message: '¡Excelente contenido! Me sirvió muchísimo el último video que subiste.', reply: '¡Muchas gracias Martín! Se vienen más tutoriales esta semana.', date: 'Hace 2 horas' },
@@ -747,16 +1130,89 @@
                     }
                 },
 
-                openLegalModal() {
-                    this.showLegalModal = true;
-                    this.logEvent('LEGAL_TERMS_VIEWED', `Lectura de Términos y Condiciones (${this.legalData.config.version})`);
+                handleTermsClick() {
+                    if (this.legalConsent) {
+                        this.legalConsent = false;
+                        this.hasScrolledToBottom = false;
+                        this.logEvent('LEGAL_CONSENT_REVOKED', 'El usuario desmarcó la casilla de aceptación legal');
+                    } else {
+                        this.openLegalModal();
+                    }
                 },
 
-                acceptTermsFromModal() {
+                openLegalModal() {
+                    this.showLegalModal = true;
+                    this.hasScrolledToBottom = false;
+                    this.scrollProgress = 0;
+
+                    this.$nextTick(() => {
+                        if (this.$refs.legalScrollBox) {
+                            this.$refs.legalScrollBox.scrollTop = 0;
+                        }
+                    });
+
+                    this.logEvent('LEGAL_MODAL_OPENED', `Apertura de lectura obligatoria (${this.legalData.config.version})`);
+                },
+
+                checkLegalScroll(event) {
+                    const el = event.target;
+                    const maxScroll = el.scrollHeight - el.clientHeight;
+                    
+                    if (maxScroll <= 0) {
+                        this.scrollProgress = 100;
+                        this.hasScrolledToBottom = true;
+                        return;
+                    }
+
+                    const currentProgress = Math.min(100, Math.round((el.scrollTop / maxScroll) * 100));
+                    this.scrollProgress = currentProgress;
+
+                    if (el.scrollTop + el.clientHeight >= el.scrollHeight - 12) {
+                        if (!this.hasScrolledToBottom) {
+                            this.hasScrolledToBottom = true;
+                            this.scrollProgress = 100;
+                            this.logEvent('LEGAL_SCROLL_COMPLETED', `El usuario deslizó hasta el 100% de los Términos (${this.legalData.config.version})`);
+                        }
+                    }
+                },
+
+                acceptTermsAfterScroll() {
+                    if (!this.hasScrolledToBottom) return;
                     this.legalConsent = true;
                     this.showLegalModal = false;
-                    this.logEvent('LEGAL_TERMS_ACCEPTED', `Aceptación explícita de Términos (${this.legalData.config.version})`);
-                    this.showToast('Términos legales aceptados');
+                    this.logEvent('LEGAL_TERMS_ACCEPTED', `Aceptación expresa post-scroll 100% de versión ${this.legalData.config.version}`);
+                    this.showToast('Términos verificados y aceptados correctamente');
+                },
+
+                declineTerms() {
+                    if (!this.legalConsent) {
+                        this.hasScrolledToBottom = false;
+                    }
+                    this.showLegalModal = false;
+                    this.logEvent('LEGAL_MODAL_CLOSED', 'El usuario cerró la ventana de términos legales');
+                },
+
+                async selectUnitPreset(preset) {
+                    this.creator.unit_icon = preset.icon;
+                    this.creator.unit_name_singular = preset.singular;
+                    this.creator.unit_name_plural = preset.plural;
+
+                    this.logEvent('UNIT_CUSTOMIZED', `Ícono cambiado a ${preset.icon} (${preset.plural})`, preset);
+                    this.showToast(`Unidad actualizada: ${preset.icon} ${preset.plural}`);
+
+                    try {
+                        await fetch('/api/creator/unit', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                user_id: this.currentUser?.id || this.creator.id,
+                                user_email: this.currentUser?.email || null,
+                                unit_icon: preset.icon,
+                                unit_name_singular: preset.singular,
+                                unit_name_plural: preset.plural
+                            })
+                        });
+                    } catch (e) {}
                 },
 
                 async logEvent(action, summary, details = {}) {
@@ -769,7 +1225,6 @@
                         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
                     });
 
-                    // Solo enviamos al backend si estamos logueados (endpoint protegido)
                     if (!this.authToken) return;
 
                     try {
@@ -819,6 +1274,13 @@
                     this.logEvent('AUTH_OPENED', `Apertura de formulario en modo: ${mode}`, { mode });
                 },
 
+                startRegistration() {
+                    this.authMode = 'register';
+                    this.regRole = 'creator';
+                    this.currentView = 'auth';
+                    this.logEvent('LANDING_CTA_CLICKED', `Usuario ingresado desde la home: ${this.username || 'vacío'}`);
+                },
+
                 isFormValid() {
                     if (this.authMode === 'login') {
                         return this.email.trim() !== '' && this.password.trim() !== '';
@@ -852,7 +1314,6 @@
                             this.showToast(data.error || 'Credenciales inválidas');
                         }
                     } catch (e) {
-                        // Fallback demo si el backend no está disponible
                         this.isLoggedIn = true;
                         this.currentUser = { id: 'demo-id', email: this.email, role: 'creator', display_name: 'SneakBtw', username: 'sneakbtw' };
                         this.currentView = 'dashboard';
@@ -891,6 +1352,32 @@
                     }
                 },
 
+                async recoverPassword() {
+                    if (!this.email.trim()) {
+                        this.showToast('Por favor, ingresá tu correo electrónico primero.');
+                        return;
+                    }
+
+                    this.showToast('Enviando instrucciones...');
+                    try {
+                        const res = await fetch('/api/auth/recover', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ email: this.email.trim() })
+                        });
+                        const data = await res.json();
+
+                        if (data.success) {
+                            this.showToast('¡Correo enviado! Revisá tu bandeja de entrada.');
+                            this.logEvent('PASSWORD_RECOVERY_SENT', `Correo de recuperación enviado a ${this.email}`);
+                        } else {
+                            this.showToast(data.error || 'No se pudo enviar el correo.');
+                        }
+                    } catch (e) {
+                        this.showToast('Error de conexión con el servidor.');
+                    }
+                },
+
                 requestWithdrawal() {
                     this.logEvent('WITHDRAWAL_REQUEST', `Solicitud de retiro por $${this.creator.balance}`, { amount: this.creator.balance });
                     this.showToast('Solicitud de transferencia enviada y auditada');
@@ -922,7 +1409,6 @@
                         }
                     } catch (e) {}
                     
-                    // Fallback si el backend no responde
                     this.tiers = [
                         { id: 'tier-vip', name: 'Comunidad VIP', price: 4500, desc: 'Acceso a directos privados, Discord exclusivo y sorteos mensuales.', is_popular: true },
                         { id: 'tier-sponsor', name: 'Sponsor Oficial', price: 12000, desc: 'Tu nombre en los créditos de cada video y mentoría grupal.', is_popular: false }
@@ -936,7 +1422,6 @@
                 async processPayment(title, amount, type, tier = null) {
                     const donor = this.supporterName.trim() || 'Anónimo';
                     
-                    // Validación: si es suscripción, exigir email
                     if (type === 'subscription' && !this.supporterEmail.trim()) {
                         this.showToast('Necesitás ingresar tu email para suscribirte');
                         return;
@@ -947,7 +1432,6 @@
 
                     try {
                         if (type === 'subscription' && tier) {
-                            // SUSCRIPCIÓN REAL
                             const res = await fetch('/api/subscribe', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
@@ -965,7 +1449,6 @@
                                 this.showToast(data.error || 'Error creando suscripción');
                             }
                         } else {
-                            // PAGO ÚNICO
                             const res = await fetch('/api/checkout', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
