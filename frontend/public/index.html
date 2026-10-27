@@ -1291,8 +1291,7 @@
                     }
                 },
 
-                async login() {
-                    this.isLoading = true;
+                async login() {this.isLoading = true;
                     try {
                         const res = await fetch('/api/auth/login', {
                             method: 'POST',
@@ -1300,7 +1299,7 @@
                             body: JSON.stringify({ email: this.email, password: this.password })
                         });
                         const data = await res.json();
-                        
+
                         if (data.success) {
                             this.isLoggedIn = true;
                             this.authToken = data.token;
@@ -1311,13 +1310,13 @@
                             this.showToast('Sesión iniciada correctamente');
                             this.loadAuditLogs();
                         } else {
+                            // Muestra el mensaje exacto del backend (ej. intentos restantes o cuenta bloqueada)
                             this.showToast(data.error || 'Credenciales inválidas');
+                            this.logEvent('LOGIN_FAILED', `Fallo de inicio de sesión: ${data.error}`);
                         }
                     } catch (e) {
-                        this.isLoggedIn = true;
-                        this.currentUser = { id: 'demo-id', email: this.email, role: 'creator', display_name: 'SneakBtw', username: 'sneakbtw' };
-                        this.currentView = 'dashboard';
-                        this.logEvent('LOGIN_SIMULATED', 'Inicio de sesión en modo local de respaldo');
+                        console.error(e);
+                        this.showToast('Error de conexión con el servidor. Intentá nuevamente.');
                     } finally {
                         this.isLoading = false;
                     }
